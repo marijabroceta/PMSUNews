@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">PMSUNews</string>
+
+    <string name="username">Username</string>
+    <string name="password">Password</string>
+
+    <string name="title">Title</string>
+    <string name="description">Description...</string>
+    <string name="tags">Tags</string>
+
+    <string name="login">Login</string>
+    <string name="upload_image_btn">Upload image</string>
+    <string name="create_btn">Create</string>
+    <string name="create_post_btn">Create post</string>
+    <string name="read_post_btn">Read post</string>
+    <string name="settings_btn">Settings</string>
+
 </resources>

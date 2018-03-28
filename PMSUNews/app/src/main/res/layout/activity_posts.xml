@@ -2,6 +2,7 @@
 <android.support.v7.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.marija.pmsunews.PostsActivity">
@@ -9,19 +10,19 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Create post"
+        android:text="@string/create_post_btn"
         android:onClick="btnCreatePostActivity"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Read post"
+        android:text="@string/read_post_btn"
         android:onClick="btnReadPostActivity"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Settings"
+        android:text="@string/settings_btn"
         android:onClick="btnSettingsActivity"/>
 
 </android.support.v7.widget.LinearLayoutCompat>

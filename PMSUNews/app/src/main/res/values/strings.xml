@@ -15,4 +15,12 @@
     <string name="read_post_btn">Read post</string>
     <string name="settings_btn">Settings</string>
 
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+
+    <string name="home">Home</string>
+    <string name="all_post">All posts</string>
+    <string name="preferances">Preferances</string>
+    <string name="preferance_long">Change your preferances</string>
+
 </resources>

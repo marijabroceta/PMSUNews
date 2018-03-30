@@ -11,7 +11,8 @@
         android:theme="@style/AppTheme">
         <activity
             android:name=".LoginActivity"
-            android:label="Login">
+            android:label="Login"
+            android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -20,16 +21,21 @@
         </activity>
         <activity
             android:name=".PostsActivity"
-            android:label="Post"/>
+            android:label="Post"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".CreatePostActivity"
-            android:label="Create post"/>
+            android:label="Create post"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ReadPostActivity"
-            android:label="Read post"/>
+            android:label="Read post"
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".SettingsActivity"
-            android:label="Settings"/>
+            android:label="Settings"
+            android:theme="@style/AppTheme.NoActionBar"/>
+        <activity android:name=".adapters.DrawerListAdapter"></activity>
     </application>
 
 </manifest>

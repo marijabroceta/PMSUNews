@@ -5,9 +5,9 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.support.v7.widget.Toolbar;
@@ -66,6 +66,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
         mDrawerPane = findViewById(R.id.drawer_pane);
         DrawerListAdapter adapter = new DrawerListAdapter(this, mNavItems);
+        mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerList.setAdapter(adapter);
 
         Toolbar toolbar = findViewById(R.id.create_post_toolbar);
@@ -122,6 +123,41 @@ public class CreatePostActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (mDrawerToggle.onOptionsItemSelected(item)) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    private class DrawerItemClickListener implements ListView.OnItemClickListener {
+        @Override
+        public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+            selectItemFromDrawer(position);
+        }
+    }
+
+    private void selectItemFromDrawer(int position){
+        if(position == 0){
+            Intent homeIntent = new Intent(this, PostsActivity.class);
+            startActivity(homeIntent);
+        }else if(position == 1){
+            Intent preferanceIntent = new Intent(this,SettingsActivity.class);
+            startActivity(preferanceIntent);
+        }
+
+        mDrawerList.setItemChecked(position, true);
+        setTitle(mNavItems.get(position).getmTitle());
+        mDrawerLayout.closeDrawer(mDrawerPane);
+    }
+
+    @Override
+    public void setTitle(CharSequence title) {
+        mTitle = title;
+        getSupportActionBar().setTitle(mTitle);
+    }
 
 
     @Override

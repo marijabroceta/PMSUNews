@@ -7,162 +7,249 @@
     android:layout_height="match_parent"
     tools:context="com.example.marija.pmsunews.ReadPostActivity">
 
-    <TextView
-        android:id="@+id/title_view"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_margin="10dp"
-        android:textSize="20sp"/>
-
-    <RelativeLayout
-        android:orientation="horizontal"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/author_view"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp" />
-        <TextView
-            android:id="@+id/date_view"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/author_view"
-            android:layout_margin="10dp" />
-
-    </RelativeLayout>
-
-
-
-    <ImageView
-        android:id="@+id/image_view"
+    <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@mipmap/ic_launcher"/>
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-    <TextView
-        android:id="@+id/description_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"/>
 
-    <TextView
-        android:id="@+id/tags_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"/>
-
-    <RelativeLayout
-
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageButton
-            android:id="@+id/like_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_like"
-            android:layout_marginLeft="10dp"/>
-
-        <TextView
-            android:id="@+id/like_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/like_view"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"/>
-
-        <ImageButton
-            android:id="@+id/dislike_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_dislike"
-            android:layout_toRightOf="@id/like_text"
-            />
-
-        <TextView
-            android:id="@+id/dislike_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/dislike_view"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"/>
-
-    </RelativeLayout>
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/border"
-        android:layout_margin="10dp">
-
-        <TextView
-            android:id="@+id/title_comment_view"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:textSize="18sp"/>
+            android:layout_height="1dp"
+            android:background="@color/colorPrimary" />
 
-        <TextView
-            android:id="@+id/author_comment_view"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_below="@id/title_comment_view"/>
-
-        <TextView
-            android:id="@+id/date_comment_view"
-            android:layout_width="100dp"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_toRightOf="@id/author_comment_view"
-            android:layout_below="@id/title_comment_view"/>
-
-        <TextView
-            android:id="@+id/comment_view"
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/read_post_toolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:layout_below="@id/author_comment_view"/>
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            app:popupTheme="@style/AppTheme.PopupOverlay"
+            app:layout_scrollFlags="scroll|enterAlways">
 
-        <ImageButton
-            android:id="@+id/like_comment_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_like"
-            android:layout_below="@id/comment_view"/>
+        </android.support.v7.widget.Toolbar>
 
-        <TextView
-            android:id="@+id/like_comment_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/like_comment_image"
-            android:layout_below="@id/comment_view"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:layout_marginTop="20dp"/>
+    </android.support.design.widget.AppBarLayout>
+    
+    <android.support.v4.widget.DrawerLayout
+        android:id="@+id/drawer_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-        <ImageButton
-            android:id="@+id/dislike_comment_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_action_dislike"
-            android:layout_toRightOf="@id/like_comment_text"
-            android:layout_below="@id/comment_view"/>
+            <TextView
+                android:id="@+id/title_view"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_margin="10dp"
+                android:textSize="20sp"/>
 
-        <TextView
-            android:id="@+id/dislike_comment_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/dislike_comment_image"
-            android:layout_below="@id/comment_view"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="20dp"/>
+            <RelativeLayout
+                android:id="@+id/author_layout"
+                android:orientation="horizontal"
+                android:layout_below="@id/title_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
-    </RelativeLayout>
+                <TextView
+                    android:id="@+id/author_view"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp" />
+                <TextView
+                    android:id="@+id/date_view"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/author_view"
+                    android:layout_margin="10dp" />
 
+            </RelativeLayout>
 
+            <ImageView
+                android:id="@+id/image_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/author_layout"
+                android:src="@mipmap/ic_launcher"/>
 
+            <TextView
+                android:id="@+id/description_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/image_view"
+                android:layout_margin="10dp"/>
+
+            <TextView
+                android:id="@+id/tags_view"
+                android:layout_below="@id/description_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"/>
+
+            <RelativeLayout
+                android:id="@+id/like_dislike_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tags_view">
+
+                <ImageButton
+                    android:id="@+id/like_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_like"
+                    android:layout_marginLeft="10dp"/>
+
+                <TextView
+                    android:id="@+id/like_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/like_view"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp"/>
+
+                <ImageButton
+                    android:id="@+id/dislike_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_dislike"
+                    android:layout_toRightOf="@id/like_text"
+                    />
+
+                <TextView
+                    android:id="@+id/dislike_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/dislike_view"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"/>
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/border"
+                android:layout_below="@id/like_dislike_layout"
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/title_comment_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:textSize="18sp"/>
+
+                <TextView
+                    android:id="@+id/author_comment_view"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@id/title_comment_view"/>
+
+                <TextView
+                    android:id="@+id/date_comment_view"
+                    android:layout_width="100dp"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_toRightOf="@id/author_comment_view"
+                    android:layout_below="@id/title_comment_view"/>
+
+                <TextView
+                    android:id="@+id/comment_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@id/author_comment_view"/>
+
+                <ImageButton
+                    android:id="@+id/like_comment_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_like"
+                    android:layout_below="@id/comment_view"/>
+
+                <TextView
+                    android:id="@+id/like_comment_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/like_comment_image"
+                    android:layout_below="@id/comment_view"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginRight="10dp"
+                    android:layout_marginTop="20dp"/>
+
+                <ImageButton
+                    android:id="@+id/dislike_comment_image"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_dislike"
+                    android:layout_toRightOf="@id/like_comment_text"
+                    android:layout_below="@id/comment_view"/>
+
+                <TextView
+                    android:id="@+id/dislike_comment_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/dislike_comment_image"
+                    android:layout_below="@id/comment_view"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="20dp"/>
+
+            </RelativeLayout>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/drawer_pane"
+            android:layout_width="280dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="start">
+
+            <RelativeLayout
+                android:id="@+id/profile_box"
+                android:layout_width="match_parent"
+                android:layout_height="100dp"
+                android:background="@color/gray_orange"
+                android:padding="8dp">
+
+                <ImageView
+                    android:id="@+id/avatar"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/ic_action_person"
+                    android:layout_marginTop="15dp"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="42dp"
+                    android:layout_centerVertical="true"
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@id/avatar"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/user"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Marija"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:textColor="#fff"/>
+
+                </LinearLayout>
+            </RelativeLayout>
+
+            <ListView
+                android:id="@+id/nav_list"
+                android:layout_width="280dp"
+                android:layout_height="match_parent"
+                android:layout_below="@id/profile_box"
+                android:choiceMode="singleChoice"
+                android:background="#fff"/>
+        </RelativeLayout>
+    </android.support.v4.widget.DrawerLayout>
 </LinearLayout>

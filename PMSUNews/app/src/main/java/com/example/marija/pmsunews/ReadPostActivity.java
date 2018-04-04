@@ -74,7 +74,8 @@ public class ReadPostActivity extends AppCompatActivity {
 
         prepareMenu(mNavItems);
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = getTitle();
+        mDrawerTitle = getTitle();
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.nav_list);

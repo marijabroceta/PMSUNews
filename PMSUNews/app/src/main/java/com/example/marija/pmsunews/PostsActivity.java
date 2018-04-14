@@ -15,6 +15,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
 import com.example.marija.pmsunews.model.NavItem;
@@ -106,13 +107,29 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_menu_post, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+                return true;
+            case R.id.action_create_post:
+                Toast.makeText(this,"Create post",Toast.LENGTH_SHORT).show();
         }
 
         return super.onOptionsItemSelected(item);
     }
+
+
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {
         @Override

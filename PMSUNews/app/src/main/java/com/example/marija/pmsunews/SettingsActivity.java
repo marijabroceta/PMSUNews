@@ -3,6 +3,8 @@ package com.example.marija.pmsunews;
 import android.preference.PreferenceActivity;
 
 import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
 
 
 public class SettingsActivity extends PreferenceActivity {
@@ -18,7 +20,7 @@ public class SettingsActivity extends PreferenceActivity {
 
 
     }
-/*
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item){
         switch (item.getItemId()){
@@ -27,7 +29,7 @@ public class SettingsActivity extends PreferenceActivity {
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }*/
+    }
 
     @Override
     protected void onResume(){

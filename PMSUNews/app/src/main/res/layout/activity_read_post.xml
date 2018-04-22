@@ -79,7 +79,7 @@
                     android:id="@+id/avatar"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_action_person"
+                    android:src="@drawable/ic_user_white"
                     android:layout_marginTop="15dp"/>
 
                 <LinearLayout
@@ -97,7 +97,15 @@
                         android:text="Marija"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="#fff"/>
+                        android:textColor="@color/white"/>
+
+                    <TextView
+                        android:id="@+id/view_profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="View profile"
+                        android:textSize="14sp"
+                        android:textColor="@color/white"/>
 
                 </LinearLayout>
             </RelativeLayout>

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.example.marija.pmsunews.R;
 import com.example.marija.pmsunews.model.Comment;
+import com.example.marija.pmsunews.model.Post;
 import com.example.marija.pmsunews.model.User;
 
 import java.text.SimpleDateFormat;
@@ -24,6 +25,7 @@ public class CommentsFragment extends Fragment {
     View view;
     Comment comment = new Comment();
     User user = new User();
+    Post post = new Post();
 
     public CommentsFragment(){
 
@@ -51,7 +53,7 @@ public class CommentsFragment extends Fragment {
 
         TextView date_comment_view = view.findViewById(R.id.date_comment_view);
         //noinspection deprecation
-        comment.setDate(new Date(2018,03,26,9,34));
+        comment.setDate(new Date(2018-1900,03-1,26,9,34));
         date_comment_view.setText(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(comment.getDate()));
 
         TextView comment_view = view.findViewById(R.id.comment_view);

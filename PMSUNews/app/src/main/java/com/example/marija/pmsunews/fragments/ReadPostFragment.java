@@ -1,11 +1,15 @@
 package com.example.marija.pmsunews.fragments;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -16,8 +20,11 @@ import com.example.marija.pmsunews.model.User;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
+import java.util.ListIterator;
 
 /**
  * Created by Marija on 5.4.2018..
@@ -26,6 +33,7 @@ import java.util.List;
 public class ReadPostFragment extends Fragment {
 
     View view;
+
     Post post = new Post();
     User user = new User();
 
@@ -58,12 +66,17 @@ public class ReadPostFragment extends Fragment {
         author_view.setText(post.getAuthor().getUsername());
 
         TextView date_view = view.findViewById(R.id.date_view);
-        //noinspection deprecation
-        post.setDate(new Date(2018,2,23,8,45));
-        date_view.setText(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(post.getDate()));
+
+        post.setDate(new Date(2018-1900,2-1,23,8,45));
+        String newDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(post.getDate());
+        date_view.setText(newDate);
 
         TextView description_view = view.findViewById(R.id.description_view);
-        post.setDescription("Neki post");
+        post.setDescription("There's a reason that all of Marvel's heroes have to come together in Infinity War, and his name is Thanos. " +
+                "Thing is, exactly how powerful is he?\n" +
+                "The topic of Thano's impressive power set came up during a chat with Avengers: Infinity War directors Anthony and Joe Russo, " +
+                "where they revealed just how nearly indestructible Thanos happens to be. " +
+                "They also used quite the comparison for his strength, suggesting that he's even stronger than the Avengers' biggest hitter.");
         description_view.setText(post.getDescription());
 
         TextView like_text = view.findViewById(R.id.like_text);
@@ -83,8 +96,17 @@ public class ReadPostFragment extends Fragment {
         tags.add(tag1);
         post.setTags(tags);
 
+
+        String empty = "";
         for (Tag t:tags){
-            tags_view.setText(t.getName());
+            empty+=t.getName();
+            tags_view.setText(empty);
         }
+
+        ImageView image_view = view.findViewById(R.id.image_view);
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.avengers1);
+        post.setPhoto(bitmap);
+        image_view.setImageBitmap(post.getPhoto());
+
     }
 }

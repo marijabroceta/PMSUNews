@@ -59,65 +59,6 @@ public class ReadPostActivity extends AppCompatActivity {
         setContentView(R.layout.activity_read_post);
 
 
-
-
-
-
-/*
-        TextView title_view = (TextView) findViewById(R.id.title_view);
-        //post.setTitle("Neki naslov");
-        title_view.setText("Neki naslov");
-
-/*
-        TextView author_view = findViewById(R.id.author_view);
-        user.setUsername("Marija");
-        post.setAuthor(user);
-        author_view.setText(post.getAuthor().getUsername());
-
-        TextView date_view = findViewById(R.id.date_view);
-        //noinspection deprecation
-        post.setDate(new Date(2018,2,23));
-        date_view.setText(new SimpleDateFormat("dd.MM.yyyy").format(post.getDate()));
-
-        TextView description_view = findViewById(R.id.description_view);
-        post.setDescription("Neki post");
-        description_view.setText(post.getDescription());
-
-        TextView like_text = findViewById(R.id.like_text);
-        post.setLikes(25);
-        like_text.setText(String.valueOf(post.getLikes()));
-
-        TextView dislike_text = findViewById(R.id.dislike_text);
-        post.setDislikes(6);
-        dislike_text.setText(String.valueOf(post.getDislikes()));
-
-        TextView tags_view = findViewById(R.id.tags_view);
-        tag.setName("#tag1");
-        tag.setName("#tag2");
-        tags.add(tag);
-        post.setTags(tags);
-        //tags_view.setText(post.getTags(tags));
-
-
-
-        TextView title_comment_view = findViewById(R.id.title_comment_view);
-        title_comment_view.setText("Naslov komentara");
-
-        TextView author_comment_view = findViewById(R.id.author_comment_view);
-        author_comment_view.setText("John");
-
-        TextView date_comment_view = findViewById(R.id.date_comment_view);
-        date_comment_view.setText("25.2.2018");
-
-        TextView comment_view = findViewById(R.id.comment_view);
-        comment_view.setText("Komentar 1");
-
-        TextView like_comment_text = findViewById(R.id.like_comment_text);
-        like_comment_text.setText("12");
-
-        TextView dislike_comment_text = findViewById(R.id.dislike_comment_text);
-        dislike_comment_text.setText("4");*/
-
         prepareMenu(mNavItems);
 
         mTitle = getTitle();
@@ -195,6 +136,7 @@ public class ReadPostActivity extends AppCompatActivity {
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
         mNavItems.add(new NavItem(getString(R.string.home), getString(R.string.all_post), R.drawable.ic_action_home));
+        mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
 
     }
@@ -240,9 +182,13 @@ public class ReadPostActivity extends AppCompatActivity {
             Intent homeIntent = new Intent(this, PostsActivity.class);
             startActivity(homeIntent);
         }else if(position == 1){
+            Intent createIntent = new Intent(this,CreatePostActivity.class);
+            startActivity(createIntent);
+        }else if(position == 2){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
         }
+
 
         mDrawerList.setItemChecked(position, true);
         setTitle(mNavItems.get(position).getmTitle());

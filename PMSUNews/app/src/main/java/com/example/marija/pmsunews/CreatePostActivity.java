@@ -1,10 +1,14 @@
 package com.example.marija.pmsunews;
 
 import android.content.Intent;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,6 +17,7 @@ import android.widget.EditText;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
 import com.example.marija.pmsunews.model.NavItem;
@@ -25,7 +30,6 @@ public class CreatePostActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
     private RelativeLayout mDrawerPane;
     private ActionBarDrawerToggle mDrawerToggle;
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ListView mDrawerList;
     private ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
@@ -59,7 +63,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
         prepareMenu(mNavItems);
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = getTitle();
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.nav_list);
@@ -100,6 +104,14 @@ public class CreatePostActivity extends AppCompatActivity {
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(findViewById(R.id.coordinator),"Post is created",Snackbar.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override
@@ -124,9 +136,24 @@ public class CreatePostActivity extends AppCompatActivity {
     }
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.activity_menu_create_post, menu);
+        return super.onCreateOptionsMenu(menu);
+    }
+
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (mDrawerToggle.onOptionsItemSelected(item)) {
-            return true;
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                Intent i = new Intent(this, SettingsActivity.class);
+                startActivity(i);
+                return true;
+            case R.id.action_create_done:
+                Toast.makeText(this,"Created",Toast.LENGTH_SHORT).show();
+                return true;
+
         }
 
         return super.onOptionsItemSelected(item);

@@ -41,51 +41,68 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <RelativeLayout
-            android:id="@+id/main_content"
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinator"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <EditText
-                android:id="@+id/title_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:hint="@string/title"/>
-
-            <EditText
-                android:id="@+id/description_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_below="@id/title_edit"
-                android:hint="@string/description"/>
-
-            <EditText
-                android:id="@+id/tags_edit"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_below="@id/description_edit"
-                android:hint="@string/tags"/>
-
-            <Button
-                android:id="@+id/upload_btn"
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_margin="10dp"
-                android:layout_below="@id/tags_edit"
-                android:text="@string/upload_image_btn"/>
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_done_white"
+                android:backgroundTint="@color/colorPrimary"/>
 
-            <Button
-                android:id="@+id/create_btn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/create_btn"
-                android:layout_below="@id/upload_btn"
-                android:layout_marginLeft="10dp" />
+            <RelativeLayout
+                android:id="@+id/main_content"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
 
-        </RelativeLayout>
+                <EditText
+                    android:id="@+id/title_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:hint="@string/title"/>
+
+                <EditText
+                    android:id="@+id/description_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@id/title_edit"
+                    android:hint="@string/description"/>
+
+                <EditText
+                    android:id="@+id/tags_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@id/description_edit"
+                    android:hint="@string/tags"/>
+
+                <Button
+                    android:id="@+id/upload_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@id/tags_edit"
+                    android:text="@string/upload_image_btn"/>
+
+                <Button
+                    android:id="@+id/create_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/create_btn"
+                    android:layout_below="@id/upload_btn"
+                    android:layout_marginLeft="10dp" />
+
+            </RelativeLayout>
+        </android.support.design.widget.CoordinatorLayout>
 
         <RelativeLayout
             android:id="@+id/drawer_pane"
@@ -104,7 +121,7 @@
                     android:id="@+id/avatar"
                     android:layout_width="50dp"
                     android:layout_height="50dp"
-                    android:src="@drawable/ic_action_person"
+                    android:src="@drawable/ic_user_white"
                     android:layout_marginTop="15dp"/>
 
                 <LinearLayout
@@ -122,7 +139,15 @@
                         android:text="Marija"
                         android:textSize="16sp"
                         android:textStyle="bold"
-                        android:textColor="#fff"/>
+                        android:textColor="@color/white"/>
+
+                    <TextView
+                        android:id="@+id/view_profile"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/white"
+                        android:textSize="14sp"
+                        android:text="View profile"/>
 
                 </LinearLayout>
             </RelativeLayout>

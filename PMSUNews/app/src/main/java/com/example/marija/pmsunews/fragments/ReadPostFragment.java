@@ -1,5 +1,6 @@
 package com.example.marija.pmsunews.fragments;
 
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
@@ -14,6 +15,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.marija.pmsunews.R;
+import com.example.marija.pmsunews.ReadPostActivity;
 import com.example.marija.pmsunews.model.Post;
 import com.example.marija.pmsunews.model.Tag;
 import com.example.marija.pmsunews.model.User;
@@ -40,6 +42,9 @@ public class ReadPostFragment extends Fragment {
 
     ArrayList<Tag> tags = new ArrayList<>();
 
+    ArrayList<Post> posts = new ArrayList<>();
+
+
     public ReadPostFragment(){
 
     }
@@ -47,6 +52,8 @@ public class ReadPostFragment extends Fragment {
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
+
+
 
         view = inflater.inflate(R.layout.read_post_fragment,container,false);
         return view;
@@ -57,8 +64,9 @@ public class ReadPostFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         TextView title_view = view.findViewById(R.id.title_view);
-        post.setTitle("Avengers Infinity War release on April 26th");
-        title_view.setText(post.getTitle());
+        //post.setTitle("Avengers Infinity War release on April 26th");
+        //title_view.setText(post.getTitle());
+        title_view.setText(getActivity().getIntent().getStringExtra("title"));
 
         TextView author_view = view.findViewById(R.id.author_view);
         user.setUsername("Marija");
@@ -108,5 +116,11 @@ public class ReadPostFragment extends Fragment {
         post.setPhoto(bitmap);
         image_view.setImageBitmap(post.getPhoto());
 
+        posts.add(post);
+
+
+
     }
+
+
 }

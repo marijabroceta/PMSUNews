@@ -117,6 +117,9 @@ public class ReadPostActivity extends AppCompatActivity {
 
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
+
+
+
     }
 
     @Override
@@ -127,6 +130,8 @@ public class ReadPostActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        finish();
+        startActivity(getIntent());
     }
 
     @Override

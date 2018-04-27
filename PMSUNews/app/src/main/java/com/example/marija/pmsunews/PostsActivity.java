@@ -1,8 +1,13 @@
 package com.example.marija.pmsunews;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.preference.CheckBoxPreference;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -20,11 +25,14 @@ import android.widget.Toast;
 
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
 import com.example.marija.pmsunews.adapters.PostListAdapter;
+import com.example.marija.pmsunews.fragments.ReadPostFragment;
 import com.example.marija.pmsunews.model.NavItem;
 import com.example.marija.pmsunews.model.Post;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 
 @SuppressWarnings("deprecation")
@@ -39,7 +47,16 @@ public class PostsActivity extends AppCompatActivity {
     private ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
     private ArrayList<Post> posts = new ArrayList<Post>();
 
-    private Post post = new Post();
+    private PostListAdapter postListAdapter;
+
+    private Post post1 = new Post();
+    private Post post2 = new Post();
+    private Post post3 = new Post();
+
+    private boolean sortPostByDate;
+    private boolean sortPostByPopularity;
+
+    private SharedPreferences sharedPreferences;
 
 
     @Override
@@ -102,28 +119,74 @@ public class PostsActivity extends AppCompatActivity {
         });
 
 
-        post.setDate(new Date(2018-1900,2-1,23,8,45));
+
+
+        post1.setDate(new Date(2018-1900,3-1,23,8,45));
         //String newDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(post.getDate());
-        post.setTitle("Avengers Infinity War release on April 26th");
+        post1.setTitle("Avengers Infinity War release on April 26th");
+        post1.setLikes(25);
+        post1.setDislikes(6);
 
-        post.getDate();
-        post.getTitle();
+        post2.setDate(new Date(2018-1900,2-1,25,9,45));
+        //String newDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(post.getDate());
+        post2.setTitle("Deadpool 2 release on May 18th");
+        post2.setLikes(34);
+        post2.setDislikes(3);
 
-        posts.add(post);
+        post3.setDate(new Date(2018-1900,4-1,25,9,45));
+        post3.setTitle("Amazing victory of Liverpool");
+        post3.setLikes(26);
+        post3.setDislikes(5);
 
-        PostListAdapter postListAdapter = new PostListAdapter(this,posts);
-        ListView listView = findViewById(R.id.post_list);
+        post1.getDate();
+        post1.getTitle();
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.avengers1);
+        post1.setPhoto(bitmap);
+
+        post2.getDate();
+        post2.getTitle();
+        Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.deadpool);
+        post2.setPhoto(bitmap1);
+
+
+        post3.getDate();
+        post3.getTitle();
+        Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.liverpool);
+        post3.setPhoto(bitmap2);
+
+
+        posts.add(post1);
+        posts.add(post2);
+        posts.add(post3);
+
+
+
+        postListAdapter = new PostListAdapter(this,posts);
+        final ListView listView = findViewById(R.id.post_list);
 
         //postListAdapter.add(post);
         listView.setAdapter(postListAdapter);
 
+
+
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+
+
                 Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
+                intent.putExtra("title",post2.getTitle());
                 startActivity(intent);
+
+
             }
         });
+
+        sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        consultPreferences();
+
+
 
     }
 
@@ -135,11 +198,59 @@ public class PostsActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        finish();
+        startActivity(getIntent());
+    }
+
+
+    private void consultPreferences(){
+        sortPostByDate = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_date_key),false);
+        sortPostByPopularity = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_popularity_key),false);
+
+        if(sortPostByDate == true) {
+            sortDate();
+        }
+
+        if(sortPostByPopularity == true){
+            sortByPopularity();
+        }
+    }
+
+
+    public void sortDate(){
+        Collections.sort(posts, new Comparator<Post>() {
+            @Override
+            public int compare(Post post, Post t1) {
+                return post1.getDate().compareTo(post.getDate());
+            }
+        });
+
+
+        postListAdapter.notifyDataSetChanged();
+    }
+
+    public void sortByPopularity(){
+
+        Collections.sort(posts, new Comparator<Post>() {
+            @Override
+            public int compare(Post post, Post t1) {
+                int first;
+                int second ;
+                first = post.getLikes() - post.getDislikes();
+                second = post1.getLikes() - post1.getDislikes();
+                return Integer.valueOf(second).compareTo(first);
+            }
+        });
+
+
+        postListAdapter.notifyDataSetChanged();
     }
 
     @Override
     protected void onResume() {
+
         super.onResume();
+
     }
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
@@ -225,18 +336,4 @@ public class PostsActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
-    public void btnCreatePostActivity(View view) {
-        Intent intent = new Intent(this,CreatePostActivity.class);
-        startActivity(intent);
-    }
-
-    public void btnReadPostActivity(View view) {
-        Intent intent = new Intent(this,ReadPostActivity.class);
-        startActivity(intent);
-    }
-
-    public void btnSettingsActivity(View view) {
-        Intent intent = new Intent(this,SettingsActivity.class);
-        startActivity(intent);
-    }
 }

@@ -5,9 +5,10 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.example.marija.pmsunews.SettingsActivity">
+    tools:context="com.example.marija.pmsunews.SettingsActivity"
+    android:background="@color/white">
 
-    <android.support.design.widget.AppBarLayout
+    <!--<android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay">
@@ -93,5 +94,5 @@
         </RelativeLayout>
 
     </android.support.v4.widget.DrawerLayout>
-
+-->
 </LinearLayout>

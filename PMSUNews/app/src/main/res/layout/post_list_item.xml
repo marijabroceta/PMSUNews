@@ -4,49 +4,50 @@
     android:layout_height="match_parent"
     android:layout_width="match_parent">
 
-    <android.support.v7.widget.CardView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
 
-        android:layout_margin="5dp">
 
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <ImageView
-                android:id="@+id/image_view"
-                android:layout_width="match_parent"
-                android:layout_height="190dp"
-                android:src="@drawable/avengers1" />
-
-            <TextView
-                android:id="@+id/date_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/image_view"
-                android:layout_alignRight="@id/image_view"
-                android:layout_above="@id/title_view"
-                android:textSize="16sp"
-                android:textColor="@color/white"
-                android:gravity="bottom"
-                android:background="@color/transparent_black"/>
-
-            <TextView
-                android:id="@+id/title_view"
+            <android.support.v7.widget.CardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignLeft="@id/image_view"
-                android:layout_alignRight="@id/image_view"
-                android:layout_alignBottom="@id/image_view"
-                android:textStyle="bold"
-                android:textSize="18sp"
-                android:textColor="@color/white"
-                android:gravity="bottom"
-                android:background="@color/transparent_black"/>
 
-        </RelativeLayout>
+                android:layout_margin="5dp">
 
-    </android.support.v7.widget.CardView>
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:id="@+id/image_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="190dp"/>
+
+                    <TextView
+                        android:id="@+id/date_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@id/image_view"
+                        android:layout_alignRight="@id/image_view"
+                        android:layout_above="@id/title_view"
+                        android:textSize="16sp"
+                        android:textColor="@color/white"
+                        android:gravity="bottom"
+                        android:background="@color/transparent_black"/>
+
+                    <TextView
+                        android:id="@+id/title_view"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_alignLeft="@id/image_view"
+                        android:layout_alignRight="@id/image_view"
+                        android:layout_alignBottom="@id/image_view"
+                        android:textStyle="bold"
+                        android:textSize="18sp"
+                        android:textColor="@color/white"
+                        android:gravity="bottom"
+                        android:background="@color/transparent_black"/>
+
+                </RelativeLayout>
+
+            </android.support.v7.widget.CardView>
 
 </RelativeLayout>

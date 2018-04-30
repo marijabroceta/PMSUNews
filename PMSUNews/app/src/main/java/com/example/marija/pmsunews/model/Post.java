@@ -2,6 +2,8 @@ package com.example.marija.pmsunews.model;
 
 import android.graphics.Bitmap;
 import android.location.Location;
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -110,4 +112,7 @@ public class Post {
     public void setDislikes(int dislikes) {
         this.dislikes = dislikes;
     }
+
+
+
 }

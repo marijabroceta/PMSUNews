@@ -18,7 +18,7 @@
             <TextView
                 android:id="@+id/title_view"
                 android:layout_width="match_parent"
-                android:layout_height="50dp"
+                android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:textSize="20sp"
                 android:textColor="@color/white"/>
@@ -68,8 +68,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="190dp"
                 android:layout_below="@id/author_layout"
-                android:scaleType="centerCrop"/>
-                <!--android:src="@drawable/avengers"-->
+                android:scaleType="centerCrop"
+                android:layout_margin="5dp"/>
+
 
             <TextView
                 android:id="@+id/description_view"

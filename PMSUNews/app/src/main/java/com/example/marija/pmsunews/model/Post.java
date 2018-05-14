@@ -5,6 +5,10 @@ import android.location.Location;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -13,17 +17,36 @@ import java.util.List;
  * Created by Marija on 4.4.2018..
  */
 
-public class Post {
+public class Post implements Serializable{
+
+    @SerializedName("id")
+    @Expose
     private int id;
+    @SerializedName("title")
+    @Expose
     private String title;
+    @SerializedName("description")
+    @Expose
     private String description;
+    @SerializedName("photo")
+    @Expose
     private Bitmap photo;
+    @SerializedName("author")
+    @Expose
     private User author;
+    @SerializedName("date")
+    @Expose
     private Date date;
+    @SerializedName("location")
+    @Expose
     private Location location;
     private ArrayList<Tag> tags;
     private ArrayList<Comment> comments;
+    @SerializedName("likes")
+    @Expose
     private int likes;
+    @SerializedName("dislikes")
+    @Expose
     private int dislikes;
 
     public int getId (){

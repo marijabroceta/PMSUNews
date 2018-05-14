@@ -16,12 +16,20 @@ import com.example.marija.pmsunews.adapters.CommentListAdapter;
 import com.example.marija.pmsunews.model.Comment;
 import com.example.marija.pmsunews.model.Post;
 import com.example.marija.pmsunews.model.User;
+import com.example.marija.pmsunews.service.CommentService;
+import com.example.marija.pmsunews.service.ServiceUtils;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 /**
  * Created by Marija on 5.4.2018..
@@ -30,13 +38,11 @@ import java.util.Date;
 public class CommentsFragment extends Fragment {
 
     View view;
-    Comment comment1 = new Comment();
-    Comment comment2 = new Comment();
-    User user1 = new User();
-    User user2 = new User();
 
-    private ArrayList<Comment> comments = new ArrayList<>();
-    //Post post = new Post();
+    private CommentService commentService;
+
+    private List<Comment> comments;
+    private ListView listView;
     private CommentListAdapter commentListAdapter;
 
     private SharedPreferences sharedPreferences;
@@ -58,65 +64,43 @@ public class CommentsFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-/*
-        TextView title_view = view.findViewById(R.id.title_comment_view);
-        comment.setTitle("Movie lover");
-        title_view.setText(comment.getTitle());
 
-        TextView author_comment_view = view.findViewById(R.id.author_comment_view);
-        user.setUsername("Pera");
-        comment.setUser(user);
-        author_comment_view.setText(comment.getUser().getUsername());
+        String jsonMyObject = null;
+        Bundle extras = getActivity().getIntent().getExtras();
+        if (extras != null) {
+            jsonMyObject = extras.getString("Post");
+        }
+        Post post = new Gson().fromJson(jsonMyObject, Post.class);
 
-        TextView date_comment_view = view.findViewById(R.id.date_comment_view);
-        //noinspection deprecation
-        comment.setDate(new Date(2018-1900,03-1,26,9,34));
-        date_comment_view.setText(new SimpleDateFormat("dd.MM.yyyy HH:mm").format(comment.getDate()));
+        listView = view.findViewById(R.id.comment_list);
 
-        TextView comment_view = view.findViewById(R.id.comment_view);
-        comment.setDescription("It's going to be awesome movie");
-        comment_view.setText(comment.getDescription());
+        commentService = ServiceUtils.commentService;
 
-        TextView like_comment_text = view.findViewById(R.id.like_comment_text);
-        comment.setLikes(12);
-        like_comment_text.setText(String.valueOf(comment.getLikes()));
+        Call<List<Comment>> call = commentService.getCommentsByPost(post.getId());
 
-        TextView dislike_comment_text = view.findViewById(R.id.dislike_comment_text);
-        comment.setDislikes(4);
-        dislike_comment_text.setText(String.valueOf(comment.getDislikes()));*/
+        call.enqueue(new Callback<List<Comment>>() {
+            @Override
+            public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+                comments = response.body();
+                commentListAdapter = new CommentListAdapter(getContext(),comments);
+                listView.setAdapter(commentListAdapter);
+            }
 
-        comment1.setTitle("Movie lover");
-        user1.setUsername("Pera");
-        comment1.setUser(user1);
-        comment1.setDate(new Date(2018-1900,03-1,26,9,34));
-        comment1.setDescription("It's going to be awesome movie");
-        comment1.setLikes(12);
-        comment1.setDislikes(4);
+            @Override
+            public void onFailure(Call<List<Comment>> call, Throwable t) {
 
-        comment2.setTitle("Super awesome");
-        user2.setUsername("Jova");
-        comment2.setUser(user2);
-        comment2.setDate(new Date(2018-1900,03-1,24,9,34));
-        comment2.setDescription("I can't wait to watch it");
-        comment2.setLikes(15);
-        comment2.setDislikes(5);
+            }
+        });
 
-        comments.add(comment1);
-        comments.add(comment2);
-
-        commentListAdapter = new CommentListAdapter(getContext(),comments);
-        ListView listView = view.findViewById(R.id.comment_list);
-
-        listView.setAdapter(commentListAdapter);
 
         setUp();
     }
 
     private void setUp(){
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(getContext());
-        consultPreferences();
+        //consultPreferences();
     }
-
+/*
     private void consultPreferences(){
         sortCommentsByDate = sharedPreferences.getBoolean(getString(R.string.pref_sort_comment_by_date_key),false);
         sortCommentsByPopularity = sharedPreferences.getBoolean(getString(R.string.pref_sort_comment_by_popularity_key),false);
@@ -156,6 +140,7 @@ public class CommentsFragment extends Fragment {
 
         commentListAdapter.notifyDataSetChanged();
     }
+*/
 
 
 }

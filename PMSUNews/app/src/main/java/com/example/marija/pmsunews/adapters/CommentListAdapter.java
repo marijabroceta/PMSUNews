@@ -12,10 +12,11 @@ import com.example.marija.pmsunews.model.Comment;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.List;
 
 public class CommentListAdapter extends ArrayAdapter<Comment> {
 
-    public CommentListAdapter(Context context, ArrayList<Comment> comments){super(context,0,comments);}
+    public CommentListAdapter(Context context, List<Comment> comments){super(context,0,comments);}
 
     @Override
     public View getView(int position, View view, ViewGroup viewGroup){
@@ -35,7 +36,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
 
         title_view.setText(comment.getTitle());
-        author_view.setText(comment.getUser().getUsername());
+        author_view.setText(comment.getAuthor().getName());
         date_view.setText(formatedDate);
         comment_view.setText(comment.getDescription());
         like_view.setText(String.valueOf(comment.getLikes()));

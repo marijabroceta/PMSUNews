@@ -1,6 +1,8 @@
 package com.example.marija.pmsunews;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,6 +19,7 @@ import android.widget.EditText;
 import android.support.v7.widget.Toolbar;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
@@ -34,6 +37,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
 
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +116,12 @@ public class CreatePostActivity extends AppCompatActivity {
                 Snackbar.make(findViewById(R.id.coordinator),"Post is created",Snackbar.LENGTH_SHORT).show();
             }
         });
+
+        TextView textViewUser = findViewById(R.id.user);
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
+        if(sharedPreferences.contains(LoginActivity.Username)){
+            textViewUser.setText(sharedPreferences.getString(LoginActivity.Username,""));
+        }
     }
 
     @Override
@@ -132,6 +142,7 @@ public class CreatePostActivity extends AppCompatActivity {
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
         mNavItems.add(new NavItem(getString(R.string.home), getString(R.string.all_post), R.drawable.ic_action_home));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
 
     }
 
@@ -173,6 +184,10 @@ public class CreatePostActivity extends AppCompatActivity {
         }else if(position == 1){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
+        }else if(position == 2){
+            sharedPreferences.edit().clear().commit();
+            Intent logoutIntent = new Intent(this,LoginActivity.class);
+            startActivity(logoutIntent);
         }
 
         mDrawerList.setItemChecked(position, true);

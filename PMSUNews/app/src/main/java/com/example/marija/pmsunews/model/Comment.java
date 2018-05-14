@@ -2,21 +2,41 @@ package com.example.marija.pmsunews.model;
 
 import android.os.AsyncTask;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
+import java.io.Serializable;
 import java.util.Date;
 
 /**
  * Created by Marija on 4.4.2018..
  */
 
-public class Comment {
+public class Comment implements Serializable{
 
+    @SerializedName("id")
+    @Expose
     private int id;
+    @SerializedName("title")
+    @Expose
     private String title;
+    @SerializedName("description")
+    @Expose
     private String description;
-    private User user;
+    @SerializedName("author")
+    @Expose
+    private User author;
+    @SerializedName("date")
+    @Expose
     private Date date;
+    @SerializedName("post")
+    @Expose
     private Post post;
+    @SerializedName("likes")
+    @Expose
     private int likes;
+    @SerializedName("dislikes")
+    @Expose
     private int dislikes;
     private AsyncTask.Status status;
 
@@ -44,12 +64,12 @@ public class Comment {
         this.description = description;
     }
 
-    public User getUser() {
-        return user;
+    public User getAuthor() {
+        return author;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setAuthor(User author) {
+        this.author = author;
     }
 
     public Date getDate() {

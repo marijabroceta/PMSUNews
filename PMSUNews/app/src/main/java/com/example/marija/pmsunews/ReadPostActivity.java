@@ -1,6 +1,8 @@
 package com.example.marija.pmsunews;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.AppBarLayout;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -51,7 +53,7 @@ public class ReadPostActivity extends AppCompatActivity {
     private Tag tag = new Tag();
     private ArrayList<Tag> tags = new ArrayList<>();
 
-
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,6 +121,12 @@ public class ReadPostActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
 
 
+        TextView textViewUser = findViewById(R.id.user);
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
+        if(sharedPreferences.contains(LoginActivity.Username)){
+            textViewUser.setText(sharedPreferences.getString(LoginActivity.Username,""));
+        }
+
 
     }
 
@@ -143,6 +151,7 @@ public class ReadPostActivity extends AppCompatActivity {
         mNavItems.add(new NavItem(getString(R.string.home), getString(R.string.all_post), R.drawable.ic_action_home));
         mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
 
     }
 
@@ -192,6 +201,10 @@ public class ReadPostActivity extends AppCompatActivity {
         }else if(position == 2){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
+        }else if(position == 3){
+            sharedPreferences.edit().clear().commit();
+            Intent logoutIntent = new Intent(this,LoginActivity.class);
+            startActivity(logoutIntent);
         }
 
 

@@ -11,9 +11,10 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
+            android:id="@+id/linear_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
             <TextView
                 android:id="@+id/title_view"
@@ -31,37 +32,37 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginRight="10dp"/>
 
-            <RelativeLayout
-                android:id="@+id/author_layout"
-                android:orientation="horizontal"
-                android:layout_below="@id/title_view"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <TextView
-                    android:id="@+id/author_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:textColor="@color/white"/>
-
-                <View
+                <RelativeLayout
+                    android:id="@+id/author_layout"
+                    android:orientation="horizontal"
+                    android:layout_below="@id/title_view"
                     android:layout_width="match_parent"
-                    android:layout_height="0.5dp"
-                    android:layout_below="@id/author_view"
-                    android:background="@color/white"
-                    android:layout_marginLeft="10dp"
-                    android:layout_marginRight="10dp"/>
+                    android:layout_height="wrap_content">
 
-                <TextView
-                    android:id="@+id/date_view"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/author_view"
-                    android:layout_margin="10dp"
-                    android:textColor="@color/white"/>
+                    <TextView
+                        android:id="@+id/author_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"/>
 
-            </RelativeLayout>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="0.5dp"
+                        android:layout_below="@id/author_view"
+                        android:background="@color/white"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginRight="10dp"/>
+
+                    <TextView
+                        android:id="@+id/date_view"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toRightOf="@id/author_view"
+                        android:layout_margin="10dp"
+                        android:textColor="@color/white"/>
+
+                </RelativeLayout>
 
             <ImageView
                 android:id="@+id/image_view"
@@ -80,54 +81,53 @@
                 android:layout_margin="10dp"
                 android:textColor="@color/white"/>
 
-            <TextView
+             <!--<TextView
                 android:id="@+id/tags_view"
                 android:layout_below="@id/description_view"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:textColor="@color/white"/>
+                android:textColor="@color/white"/> -->
 
             <RelativeLayout
                 android:id="@+id/like_dislike_layout"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/tags_view">
+                android:layout_height="wrap_content">
 
-            <ImageButton
-                android:id="@+id/like_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_like_white"
-                android:layout_marginLeft="10dp"
-                android:background="@null"/>
+                <ImageButton
+                    android:id="@+id/like_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_like_white"
+                    android:layout_marginLeft="10dp"
+                    android:background="@null"/>
 
-            <TextView
-                android:id="@+id/like_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/like_view"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/white"/>
+                <TextView
+                    android:id="@+id/like_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/like_view"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/white"/>
 
-            <ImageButton
-                android:id="@+id/dislike_view"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:src="@drawable/ic_action_dislike_white"
-                android:layout_toRightOf="@id/like_text"
-                android:background="@null"
-                android:layout_marginLeft="10dp"/>
+                <ImageButton
+                    android:id="@+id/dislike_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_action_dislike_white"
+                    android:layout_toRightOf="@id/like_text"
+                    android:background="@null"
+                    android:layout_marginLeft="10dp"/>
 
-            <TextView
-                android:id="@+id/dislike_text"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/dislike_view"
-                android:layout_marginLeft="10dp"
-                android:layout_marginTop="10dp"
-                android:textColor="@color/white"/>
+                <TextView
+                    android:id="@+id/dislike_text"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toRightOf="@id/dislike_view"
+                    android:layout_marginLeft="10dp"
+                    android:layout_marginTop="10dp"
+                    android:textColor="@color/white"/>
 
             </RelativeLayout>
 

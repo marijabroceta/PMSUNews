@@ -16,6 +16,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Base64;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -23,6 +24,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
@@ -32,6 +34,9 @@ import com.example.marija.pmsunews.model.NavItem;
 import com.example.marija.pmsunews.model.Post;
 import com.example.marija.pmsunews.model.Tag;
 import com.example.marija.pmsunews.model.User;
+import com.example.marija.pmsunews.service.PostService;
+import com.example.marija.pmsunews.service.ServiceUtils;
+import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
@@ -40,6 +45,11 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @SuppressWarnings("deprecation")
 public class PostsActivity extends AppCompatActivity {
@@ -51,9 +61,13 @@ public class PostsActivity extends AppCompatActivity {
     private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
-    private ArrayList<Post> posts = new ArrayList<Post>();
+    private List<Post> posts;
 
     private PostListAdapter postListAdapter;
+    private ListView listView;
+    private PostService postService;
+
+    private Post post = new Post();
 
     private Post post1 = new Post();
     private Post post2 = new Post();
@@ -67,6 +81,7 @@ public class PostsActivity extends AppCompatActivity {
 
     private boolean sortPostByDate;
     private boolean sortPostByPopularity;
+
 
     private SharedPreferences sharedPreferences;
 
@@ -130,67 +145,36 @@ public class PostsActivity extends AppCompatActivity {
             }
         });
 
+        TextView textViewUser = findViewById(R.id.user);
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+        if(sharedPreferences.contains(LoginActivity.Username)){
+            textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
+        }
+
+        listView = findViewById(R.id.post_list);
+        postService = ServiceUtils.postService;
+
+        Call call = postService.getPosts();
 
 
 
-        post1.setDate(new Date(2018-1900,3-1,23,8,45));
-        post1.setTitle("Avengers Infinity War release on April 26th");
-        user1.setUsername("Marija");
-        post1.setAuthor(user1);
-        post1.setDescription("There's a reason that all of Marvel's heroes have to come together in Infinity War, and his name is Thanos. " +
-                "Thing is, exactly how powerful is he?\n" +
-                "The topic of Thano's impressive power set came up during a chat with Avengers: Infinity War directors Anthony and Joe Russo, " +
-                "where they revealed just how nearly indestructible Thanos happens to be. " +
-                "They also used quite the comparison for his strength, suggesting that he's even stronger than the Avengers' biggest hitter.");
-        post1.setLikes(25);
-        post1.setDislikes(6);
-        Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.avengers1);
-        post1.setPhoto(bitmap);
-        Tag tag = new Tag();
-        Tag tag1 = new Tag();
-        tag.setName("#tag1");
-        tag1.setName("#tag2");
-        tags.add(tag);
-        tags.add(tag1);
-        post1.setTags(tags);
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+               posts = response.body();
+                postListAdapter = new PostListAdapter(getApplicationContext(),posts);
+                listView.setAdapter(postListAdapter);
+            }
 
-        post2.setDate(new Date(2018-1900,2-1,25,9,45));
-        post2.setTitle("Deadpool 2 release on May 18th");
-        user2.setUsername("Milan");
-        post2.setAuthor(user2);
-        post2.setDescription("Deadpool 2, the Ryan Reynolds-led sequel, is on pace to open to a huge $150 million in North America this summer, early tracking suggests. " +
-                "The superhero film isn’t bowing in theaters until May 18, but that number is already ahead of the original movie, which launched in February 2016 with $132 million domestically." +
-                " It went on to earn $783 million worldwide, making it the highest grossing R-rated film of all time.");
-        post2.setLikes(34);
-        post2.setDislikes(3);
-        Bitmap bitmap1 = BitmapFactory.decodeResource(getResources(),R.drawable.deadpool);
-        post2.setPhoto(bitmap1);
-        post2.setTags(tags);
-
-        post3.setDate(new Date(2018-1900,4-1,25,9,45));
-        post3.setTitle("Amazing victory of Liverpool");
-        user3.setUsername("Bole");
-        post3.setAuthor(user3);
-        post3.setDescription("Liverpool ran riot against AS Roma in the first leg of the Champions League semi-final to clinch a 5-2 win at Anfield. " +
-                "Mohamed Salah and Roberto Firmino were the driving forces as the Reds Ship cruised to a dominant victory, putting them in command of the tie.");
-        post3.setLikes(26);
-        post3.setDislikes(5);
-        Bitmap bitmap2 = BitmapFactory.decodeResource(getResources(),R.drawable.liverpool);
-        post3.setPhoto(bitmap2);
-        post3.setTags(tags);
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+               t.printStackTrace();
+            }
+        });
 
 
-        posts.add(post1);
-        posts.add(post2);
-        posts.add(post3);
-
-
-
-        postListAdapter = new PostListAdapter(this,posts);
-        final ListView listView = findViewById(R.id.post_list);
-
-        //postListAdapter.add(post);
-        listView.setAdapter(postListAdapter);
+        //postListAdapter = new PostListAdapter(this,posts);
+        //listView.setAdapter(postListAdapter);
 
 
 
@@ -198,19 +182,29 @@ public class PostsActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
 
-                Post post = posts.get(i);
+                post = posts.get(i);
 
+                Call<Post> call = postService.getPost(post.getId());
 
-                Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
-                intent.putExtra("title",post.getTitle());
-                String formatedDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(post.getDate());
-                intent.putExtra("date",formatedDate);
-                intent.putExtra("author",post.getAuthor().getUsername());
-                intent.putExtra("description",post.getDescription());
-                intent.putExtra("likes",String.valueOf(post.getLikes()));
-                intent.putExtra("dislikes",String.valueOf(post.getDislikes()));
+                call.enqueue(new Callback<Post>() {
+                    @Override
+                    public void onResponse(Call<Post> call, Response<Post> response) {
+                        post = response.body();
+                        Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
+                        intent.putExtra("Post",new Gson().toJson(post));
 
-                try {
+                        startActivity(intent);
+                    }
+
+                    @Override
+                    public void onFailure(Call<Post> call, Throwable t) {
+
+                    }
+                });
+
+                //Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
+
+                /*try {
                     String fileName = "drawable";
                     Bitmap mBitmap = post.getPhoto();
 
@@ -229,16 +223,15 @@ public class PostsActivity extends AppCompatActivity {
                     e.printStackTrace();
                 }
 
-                //intent.putExtra("photo",post.getPhoto());
 
                 String empty = "";
                 for (Tag t: tags){
                     empty+=t.getName();
                     intent.putExtra("tags",empty);
 
-                }
+                }*/
 
-                startActivity(intent);
+                //startActivity(intent);
 
 
             }
@@ -246,7 +239,7 @@ public class PostsActivity extends AppCompatActivity {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        consultPreferences();
+        //consultPreferences();
 
 
 
@@ -266,7 +259,7 @@ public class PostsActivity extends AppCompatActivity {
         startActivity(getIntent());
     }
 
-
+/*
     private void consultPreferences(){
         sortPostByDate = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_date_key),false);
         sortPostByPopularity = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_popularity_key),false);
@@ -308,7 +301,7 @@ public class PostsActivity extends AppCompatActivity {
 
 
         postListAdapter.notifyDataSetChanged();
-    }
+    }*/
 
     @Override
     protected void onResume() {
@@ -318,9 +311,9 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
-        mNavItems.add(new NavItem(getString(R.string.home), getString(R.string.all_post), R.drawable.ic_action_home));
         mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
+        mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
     }
 
     @Override
@@ -361,14 +354,15 @@ public class PostsActivity extends AppCompatActivity {
 
     private void selectItemFromDrawer(int position){
         if(position == 0){
-            Intent homeIntent = new Intent(this, PostsActivity.class);
-            startActivity(homeIntent);
-        }else if(position == 1){
             Intent createIntent = new Intent(this,CreatePostActivity.class);
             startActivity(createIntent);
-        }else if(position == 2){
+        }else if(position == 1){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
+        }else if(position == 2) {
+            sharedPreferences.edit().clear().commit();
+            Intent logoutIntent = new Intent(this, LoginActivity.class);
+            startActivity(logoutIntent);
         }
 
         mDrawerList.setItemChecked(position, true);

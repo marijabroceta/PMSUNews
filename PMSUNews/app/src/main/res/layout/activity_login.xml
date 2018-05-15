@@ -47,7 +47,6 @@
         android:layout_margin="10dp"
         android:layout_centerInParent="true"
         android:layout_gravity="center_horizontal"
-        android:onClick="btnStartPostsActivity"
         android:layout_below="@id/password_edit"
         android:background="@color/colorPrimary"
         android:textColor="@color/white" />

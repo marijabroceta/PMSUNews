@@ -23,4 +23,7 @@ public interface PostService {
     @GET(ServiceUtils.POST)
     Call<Post> getPost(@Path("id") int id);
 
+    @GET("posts/tag{1}")
+    Call<List<Post>> getPostsByTag(@Path("id") int id);
+
 }

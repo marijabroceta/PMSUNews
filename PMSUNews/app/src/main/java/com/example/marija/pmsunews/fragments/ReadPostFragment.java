@@ -1,5 +1,6 @@
 package com.example.marija.pmsunews.fragments;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -8,19 +9,24 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import android.text.util.Linkify;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 
+import com.example.marija.pmsunews.PostsActivity;
 import com.example.marija.pmsunews.R;
 import com.example.marija.pmsunews.ReadPostActivity;
 import com.example.marija.pmsunews.model.Post;
 import com.example.marija.pmsunews.model.Tag;
 import com.example.marija.pmsunews.model.User;
+import com.example.marija.pmsunews.service.PostService;
 import com.example.marija.pmsunews.service.ServiceUtils;
 import com.example.marija.pmsunews.service.TagService;
 import com.google.gson.Gson;
@@ -47,10 +53,15 @@ public class ReadPostFragment extends Fragment {
 
     View view;
 
+    private Post post;
+
     private TagService tagService;
+    private PostService postService;
     private TextView tags_view;
+    private TextView tag_view;
     private List<Tag> tags;
     private LinearLayout linearLayout;
+    private LinearLayout newLinearLayout;
 
     public ReadPostFragment(){
 
@@ -67,7 +78,7 @@ public class ReadPostFragment extends Fragment {
     }
 
     @Override
-    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+    public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         String jsonMyObject = null;
@@ -75,7 +86,7 @@ public class ReadPostFragment extends Fragment {
         if (extras != null) {
             jsonMyObject = extras.getString("Post");
         }
-        Post post = new Gson().fromJson(jsonMyObject, Post.class);
+        post = new Gson().fromJson(jsonMyObject, Post.class);
 
         TextView title_view = view.findViewById(R.id.title_view);
         //title_view.setText(getActivity().getIntent().getStringExtra("title"));
@@ -106,7 +117,7 @@ public class ReadPostFragment extends Fragment {
 
         //tags_view = view.findViewById(R.id.tags_view);
         //tags_view.setText(getActivity().getIntent().getStringExtra("tags"));
-
+        postService = ServiceUtils.postService;
         tagService = ServiceUtils.tagService;
 
         Call<List<Tag>> call = tagService.getTagsByPost(post.getId());
@@ -115,32 +126,51 @@ public class ReadPostFragment extends Fragment {
             @Override
             public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
                 tags = response.body();
-                /*String empty = "";
-                for (Tag t: tags){
-                    empty+=t.getName();
-                    tags_view.setText(empty);
 
-                }*/
+                newLinearLayout = new LinearLayout(getContext());
+                newLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
                 for(Tag t:tags){
-                    TextView tag_view = new TextView(getContext());
-                    tag_view.setId(t.getId());
+                    tags_view = new TextView(getContext());
+                    tags_view.setId(t.getId());
                     LinearLayout.LayoutParams params = new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT, 1.0f);
-                    params.setMargins(10,10,10,10);
-                    tag_view.setTextColor(getResources().getColor(R.color.white));
-                    tag_view.setLayoutParams(params);
-                    tag_view.setText(t.getName());
-                    linearLayout.addView(tag_view);
+                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                    params.setMargins(5,10,0,10);
+                    tags_view.setTextColor(getResources().getColor(R.color.white));
+                    tags_view.setClickable(true);
+                    tags_view.setLayoutParams(params);
+                    tags_view.setText(t.getName());
 
+                    newLinearLayout.addView(tags_view);
 
+                    System.out.println("******TAGS INSIDE*****");
+                    System.out.println(tags_view.getId());
+
+                    tags_view.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            Log.i("Tag view",String.valueOf(tags_view.getId()));
+                            //Call<List<Post>> call = postService.getPostsByTag(tags_view.getId());
+                            Intent intent = new Intent(getContext(),PostsActivity.class);
+                            intent.putExtra("tag_id",tags_view.getId());
+                            startActivity(intent);
+                        }
+                    });
                 }
+                linearLayout.addView(newLinearLayout);
+
+
+
+
             }
 
             @Override
             public void onFailure(Call<List<Tag>> call, Throwable t) {
 
             }
+
+
         });
 
 

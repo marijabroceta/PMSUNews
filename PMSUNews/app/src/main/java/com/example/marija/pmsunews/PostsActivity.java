@@ -69,14 +69,6 @@ public class PostsActivity extends AppCompatActivity {
 
     private Post post = new Post();
 
-    private Post post1 = new Post();
-    private Post post2 = new Post();
-    private Post post3 = new Post();
-
-    private User user1 = new User();
-    private User user2 = new User();
-    private User user3 = new User();
-
     public static ArrayList<Tag> tags = new ArrayList<>();
 
     private boolean sortPostByDate;
@@ -164,6 +156,7 @@ public class PostsActivity extends AppCompatActivity {
                posts = response.body();
                 postListAdapter = new PostListAdapter(getApplicationContext(),posts);
                 listView.setAdapter(postListAdapter);
+                consultPreferences();
             }
 
             @Override
@@ -173,8 +166,7 @@ public class PostsActivity extends AppCompatActivity {
         });
 
 
-        //postListAdapter = new PostListAdapter(this,posts);
-        //listView.setAdapter(postListAdapter);
+
 
 
 
@@ -221,17 +213,10 @@ public class PostsActivity extends AppCompatActivity {
 
                 }catch (Exception e){
                     e.printStackTrace();
-                }
-
-
-                String empty = "";
-                for (Tag t: tags){
-                    empty+=t.getName();
-                    intent.putExtra("tags",empty);
-
                 }*/
 
-                //startActivity(intent);
+
+
 
 
             }
@@ -257,9 +242,10 @@ public class PostsActivity extends AppCompatActivity {
         super.onRestart();
         finish();
         startActivity(getIntent());
+
     }
 
-/*
+
     private void consultPreferences(){
         sortPostByDate = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_date_key),false);
         sortPostByPopularity = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_popularity_key),false);
@@ -277,7 +263,7 @@ public class PostsActivity extends AppCompatActivity {
     public void sortDate(){
         Collections.sort(posts, new Comparator<Post>() {
             @Override
-            public int compare(Post post, Post t1) {
+            public int compare(Post post, Post post1) {
                 return post1.getDate().compareTo(post.getDate());
             }
         });
@@ -290,7 +276,7 @@ public class PostsActivity extends AppCompatActivity {
 
         Collections.sort(posts, new Comparator<Post>() {
             @Override
-            public int compare(Post post, Post t1) {
+            public int compare(Post post, Post post1) {
                 int first;
                 int second ;
                 first = post.getLikes() - post.getDislikes();
@@ -301,13 +287,12 @@ public class PostsActivity extends AppCompatActivity {
 
 
         postListAdapter.notifyDataSetChanged();
-    }*/
+    }
 
     @Override
     protected void onResume() {
 
         super.onResume();
-
     }
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
@@ -360,7 +345,11 @@ public class PostsActivity extends AppCompatActivity {
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
         }else if(position == 2) {
-            sharedPreferences.edit().clear().commit();
+            SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+
+            editor.clear();
+            editor.commit();
             Intent logoutIntent = new Intent(this, LoginActivity.class);
             startActivity(logoutIntent);
         }

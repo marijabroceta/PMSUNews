@@ -118,9 +118,9 @@ public class CreatePostActivity extends AppCompatActivity {
         });
 
         TextView textViewUser = findViewById(R.id.user);
-        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
         if(sharedPreferences.contains(LoginActivity.Username)){
-            textViewUser.setText(sharedPreferences.getString(LoginActivity.Username,""));
+            textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
         }
     }
 

@@ -45,21 +45,32 @@ public class LoginActivity extends AppCompatActivity {
 
         sharedPreferences = getSharedPreferences(MyPreferances,Context.MODE_PRIVATE);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String username = editUsername.getText().toString();
-                String password = editPassword.getText().toString();
+        String userNamePref = sharedPreferences.getString(Username,"");
 
-                SharedPreferences.Editor editor = sharedPreferences.edit();
+        System.out.println(userNamePref);
 
-                if(validateLogin(username,password)){
-                    editor.putString(Username,username);
-                    editor.commit();
-                    doLogin(username,password);
+
+        if(userNamePref.equals("")){
+            btnLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    String username = editUsername.getText().toString();
+                    String password = editPassword.getText().toString();
+
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                    if(validateLogin(username,password)){
+                        editor.putString(Username,username);
+                        editor.commit();
+                        doLogin(username,password);
+                    }
                 }
+            });
+            }else{
+                Intent intent = new Intent(this,PostsActivity.class);
+                startActivity(intent);
             }
-        });
+            
     }
 
     private boolean validateLogin(String username,String password){

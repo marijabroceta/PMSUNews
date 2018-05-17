@@ -1,5 +1,6 @@
 package com.example.marija.pmsunews.fragments;
 
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -9,17 +10,21 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 
+import android.support.v4.app.FragmentTransaction;
 import android.text.util.Linkify;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
+import com.example.marija.pmsunews.LoginActivity;
 import com.example.marija.pmsunews.PostsActivity;
 import com.example.marija.pmsunews.R;
 import com.example.marija.pmsunews.ReadPostActivity;
@@ -41,6 +46,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,11 +63,22 @@ public class ReadPostFragment extends Fragment {
 
     private TagService tagService;
     private PostService postService;
+
+
     private TextView tags_view;
     private TextView tag_view;
+    private ImageButton like_view;
+    private ImageButton dislike_view;
+
+
     private List<Tag> tags;
     private LinearLayout linearLayout;
     private LinearLayout newLinearLayout;
+    private int counterLikes;
+    private int counterDislikes;
+
+    SharedPreferences sharedPreferences;
+    String userNamePref;
 
     public ReadPostFragment(){
 
@@ -89,34 +106,28 @@ public class ReadPostFragment extends Fragment {
         post = new Gson().fromJson(jsonMyObject, Post.class);
 
         TextView title_view = view.findViewById(R.id.title_view);
-        //title_view.setText(getActivity().getIntent().getStringExtra("title"));
         title_view.setText(post.getTitle());
 
         TextView author_view = view.findViewById(R.id.author_view);
-        //author_view.setText(getActivity().getIntent().getStringExtra("author"));
         author_view.setText(post.getAuthor().getName());
 
         TextView date_view = view.findViewById(R.id.date_view);
-        //date_view.setText(getActivity().getIntent().getStringExtra("date"));
         String newDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(post.getDate());
         date_view.setText(newDate);
 
         TextView description_view = view.findViewById(R.id.description_view);
-        //description_view.setText(getActivity().getIntent().getStringExtra("description"));
         description_view.setText(post.getDescription());
 
-        TextView like_text = view.findViewById(R.id.like_text);
-       //like_text.setText(getActivity().getIntent().getStringExtra("likes"));
+        final TextView like_text = view.findViewById(R.id.like_text);
         like_text.setText(String.valueOf(post.getLikes()));
 
-        TextView dislike_text = view.findViewById(R.id.dislike_text);
-        //dislike_text.setText(getActivity().getIntent().getStringExtra("dislikes"));
+        final TextView dislike_text = view.findViewById(R.id.dislike_text);
         dislike_text.setText(String.valueOf(post.getDislikes()));
 
         linearLayout = view.findViewById(R.id.linear_layout);
 
-        //tags_view = view.findViewById(R.id.tags_view);
-        //tags_view.setText(getActivity().getIntent().getStringExtra("tags"));
+        tags_view = view.findViewById(R.id.tags_view);
+        tags_view.setText(getActivity().getIntent().getStringExtra("tags"));
         postService = ServiceUtils.postService;
         tagService = ServiceUtils.tagService;
 
@@ -130,47 +141,51 @@ public class ReadPostFragment extends Fragment {
                 newLinearLayout = new LinearLayout(getContext());
                 newLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-                for(Tag t:tags){
-                    tags_view = new TextView(getContext());
-                    tags_view.setId(t.getId());
-                    LinearLayout.LayoutParams params = new LinearLayout.LayoutParams
-                            (LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-                    params.setMargins(5,10,0,10);
-                    tags_view.setTextColor(getResources().getColor(R.color.white));
-                    tags_view.setClickable(true);
-                    tags_view.setLayoutParams(params);
-                    tags_view.setText(t.getName());
-
-                    newLinearLayout.addView(tags_view);
-
-                    System.out.println("******TAGS INSIDE*****");
-                    System.out.println(tags_view.getId());
-
-                    tags_view.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
-
-                            Log.i("Tag view",String.valueOf(tags_view.getId()));
-                            //Call<List<Post>> call = postService.getPostsByTag(tags_view.getId());
-                            Intent intent = new Intent(getContext(),PostsActivity.class);
-                            intent.putExtra("tag_id",tags_view.getId());
-                            startActivity(intent);
-                        }
-                    });
+                String empty = "";
+                for(Tag t:tags) {
+                    empty+= t.getName();
+                    tags_view.setText(empty);
                 }
-                linearLayout.addView(newLinearLayout);
-
-
-
-
             }
 
             @Override
             public void onFailure(Call<List<Tag>> call, Throwable t) {
 
             }
+        });
 
+        like_view = view.findViewById(R.id.like_view);
+        dislike_view = view.findViewById(R.id.dislike_view);
 
+        sharedPreferences = getActivity().getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
+        userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+
+        like_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(userNamePref.equals(post.getAuthor().getUsername())){
+                    Toast.makeText(getContext(),"You can't like your post",Toast.LENGTH_SHORT).show();
+                }else{
+                    addLike();
+                    like_text.setText(String.valueOf(post.getLikes()));
+                    like_view.setEnabled(false);
+
+                }
+            }
+        });
+
+        dislike_view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(userNamePref.equals(post.getAuthor().getUsername())){
+                    Toast.makeText(getContext(),"You can't dislike your post",Toast.LENGTH_SHORT).show();
+                }else{
+                    addDislike();
+                    dislike_text.setText(String.valueOf(post.getDislikes()));
+                    dislike_view.setEnabled(false);
+
+                }
+            }
         });
 
 
@@ -190,17 +205,53 @@ public class ReadPostFragment extends Fragment {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-
         image_view.setImageBitmap(bmp);*/
-
-
-
-
-
 
 
     }
 
+
+    public void addLike(){
+
+        counterLikes = post.getLikes();
+
+        post.setLikes(counterLikes+1);
+
+        System.out.println(post.getId());
+        System.out.println(post.getLikes());
+
+        Call<Post> call = postService.addLikeDislike(post,post.getId());
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                like_view.setImageResource(R.drawable.ic_like_green);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void addDislike(){
+
+        counterDislikes = post.getDislikes();
+        post.setDislikes(counterDislikes+1);
+
+        Call<Post> call = postService.addLikeDislike(post,post.getId());
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                dislike_view.setImageResource(R.drawable.ic_dislike_red);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
+
+    }
 
 }

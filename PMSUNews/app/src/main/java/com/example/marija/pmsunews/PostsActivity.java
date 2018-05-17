@@ -7,6 +7,7 @@ import android.content.res.Configuration;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
@@ -58,7 +59,6 @@ public class PostsActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private ActionBarDrawerToggle mDrawerToggle;
     private RelativeLayout mDrawerPane;
-    private CharSequence mDrawerTitle;
     private CharSequence mTitle;
     private ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
     private List<Post> posts;
@@ -85,7 +85,7 @@ public class PostsActivity extends AppCompatActivity {
 
         prepareMenu(mNavItems);
 
-        mTitle = mDrawerTitle = getTitle();
+        mTitle = getTitle();
 
         mDrawerLayout = findViewById(R.id.drawer_layout);
         mDrawerList = findViewById(R.id.nav_list);
@@ -102,7 +102,6 @@ public class PostsActivity extends AppCompatActivity {
 
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            //actionBar.setIcon(R.drawable.ic_launcher_background);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
             actionBar.setHomeButtonEnabled(true);
         }
@@ -214,11 +213,6 @@ public class PostsActivity extends AppCompatActivity {
                 }catch (Exception e){
                     e.printStackTrace();
                 }*/
-
-
-
-
-
             }
         });
 

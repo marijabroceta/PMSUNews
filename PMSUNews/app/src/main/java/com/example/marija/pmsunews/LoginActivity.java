@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                 Intent intent = new Intent(this,PostsActivity.class);
                 startActivity(intent);
             }
-            
+
     }
 
     private boolean validateLogin(String username,String password){
@@ -100,7 +100,7 @@ public class LoginActivity extends AppCompatActivity {
 
                     Intent intent = new Intent(LoginActivity.this,PostsActivity.class);
                     startActivity(intent);
-                    finish();
+
                 }else{
                     Toast.makeText(LoginActivity.this,"Username or password is incorrect",Toast.LENGTH_SHORT).show();
                 }
@@ -127,6 +127,7 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
+        finish();
     }
 
     @Override

@@ -9,12 +9,13 @@
 
     <ImageView
         android:id="@+id/logo"
-        android:layout_width="150dp"
-        android:layout_height="150dp"
-        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="200dp"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="21dp"
         android:foregroundGravity="center_vertical"
-        android:layout_marginTop="20dp"
-        android:src="@drawable/deadpool_logo"/>
+        android:src="@drawable/logo2" />
 
 
     <EditText

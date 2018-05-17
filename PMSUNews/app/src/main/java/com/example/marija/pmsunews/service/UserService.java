@@ -16,4 +16,7 @@ public interface UserService {
 
     @GET(ServiceUtils.LOGIN)
     Call<User> login(@Path("username") String username,@Path("password") String password);
+
+    @GET("users/user/{username}")
+    Call<User> getUserByUsername(@Path("username") String username);
 }

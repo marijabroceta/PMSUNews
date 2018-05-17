@@ -24,8 +24,22 @@ import android.widget.Toast;
 
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
 import com.example.marija.pmsunews.model.NavItem;
+import com.example.marija.pmsunews.model.Post;
+import com.example.marija.pmsunews.model.User;
+import com.example.marija.pmsunews.service.PostService;
+import com.example.marija.pmsunews.service.ServiceUtils;
+import com.example.marija.pmsunews.service.UserService;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import okhttp3.ResponseBody;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 @SuppressWarnings("deprecation")
 public class CreatePostActivity extends AppCompatActivity {
@@ -37,21 +51,29 @@ public class CreatePostActivity extends AppCompatActivity {
     private ListView mDrawerList;
     private ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
 
+    private EditText title_edit;
+    private EditText description_edit;
+    private EditText tags_edit;
+
+    private UserService userService;
+    private PostService postService;
     private SharedPreferences sharedPreferences;
+
+    public static User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_post);
 
-        EditText title_edit = findViewById(R.id.title_edit);
-        title_edit.getText().toString();
+        title_edit = findViewById(R.id.title_edit);
 
-        EditText description_edit = findViewById(R.id.description_edit);
-        description_edit.getText().toString();
 
-        EditText tags_edit = findViewById(R.id.tags_edit);
-        tags_edit.getText().toString();
+        description_edit = findViewById(R.id.description_edit);
+
+
+        tags_edit = findViewById(R.id.tags_edit);
+
 
         Button upload_btn = findViewById(R.id.upload_btn);
         upload_btn.setOnClickListener(new View.OnClickListener() {
@@ -62,6 +84,8 @@ public class CreatePostActivity extends AppCompatActivity {
                 startActivityForResult(Intent.createChooser(intent, "Complete action using"), 1);
             }
         });
+
+
 
         //Button create_btn = findViewById(R.id.create_btn);
 
@@ -113,7 +137,7 @@ public class CreatePostActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(findViewById(R.id.coordinator),"Post is created",Snackbar.LENGTH_SHORT).show();
+                createPost();
             }
         });
 
@@ -122,6 +146,57 @@ public class CreatePostActivity extends AppCompatActivity {
         if(sharedPreferences.contains(LoginActivity.Username)){
             textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
         }
+
+        postService = ServiceUtils.postService;
+        userService = ServiceUtils.userService;
+
+        String userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+
+        Call<User> call = userService.getUserByUsername(userNamePref);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                user = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+            }
+        });
+
+
+    }
+
+
+
+    public void createPost(){
+        Post post = new Post();
+
+        String title = title_edit.getText().toString();
+        String description = description_edit.getText().toString();
+        String tags = tags_edit.getText().toString();
+        post.setTitle(title);
+        post.setDescription(description);
+        //post.setTags(tags);
+        post.setAuthor(user);
+        post.setLikes(0);
+        post.setDislikes(0);
+        Date date = Calendar.getInstance().getTime();
+        post.setDate(date);
+        Call<ResponseBody> call = postService.createPost(post);
+        call.enqueue(new Callback<ResponseBody>() {
+            @Override
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+                Snackbar.make(findViewById(R.id.coordinator),"Post is created",Snackbar.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
+
+            }
+        });
     }
 
     @Override

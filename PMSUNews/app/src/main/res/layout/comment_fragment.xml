@@ -11,11 +11,56 @@
             android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <ListView
-                android:id="@+id/comment_list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:choiceMode="singleChoice"/>
+                <android.support.v7.widget.CardView
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    app:cardBackgroundColor="@color/colorPrimary">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="match_parent">
+                                <EditText
+                                    android:id="@+id/title_comment_edit"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_margin="10dp"
+                                    android:hint="Title..."
+                                    android:layout_gravity="center"/>
+
+                                <EditText
+                                    android:id="@+id/comment_edit"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="50dp"
+                                    android:layout_margin="10dp"
+                                    android:hint="Comment..."
+                                    android:layout_gravity="center"
+                                    android:layout_below="@id/title_comment_edit"/>
+
+                                <Button
+                                    android:id="@+id/btn_comment"
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:layout_below="@id/comment_edit"
+                                    android:layout_centerInParent="true"
+                                    android:layout_gravity="center_horizontal"
+                                    android:text="Add"
+                                    android:background="@drawable/button_style"
+                                    android:textColor="@color/white"
+                                    android:layout_margin="10dp"/>
+                        </RelativeLayout>
+
+                </android.support.v7.widget.CardView>
+
+                <ListView
+                    android:id="@+id/comment_list"
+                    android:layout_marginTop="220dp"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:choiceMode="singleChoice"/>
+
+
 
         </RelativeLayout>
 

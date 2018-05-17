@@ -81,13 +81,13 @@
                 android:layout_margin="10dp"
                 android:textColor="@color/white"/>
 
-             <!--<TextView
+             <TextView
                 android:id="@+id/tags_view"
                 android:layout_below="@id/description_view"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
-                android:textColor="@color/white"/> -->
+                android:textColor="@color/white"/>
 
             <RelativeLayout
                 android:id="@+id/like_dislike_layout"

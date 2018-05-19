@@ -25,13 +25,16 @@ import android.widget.Toast;
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
 import com.example.marija.pmsunews.model.NavItem;
 import com.example.marija.pmsunews.model.Post;
+import com.example.marija.pmsunews.model.Tag;
 import com.example.marija.pmsunews.model.User;
 import com.example.marija.pmsunews.service.PostService;
 import com.example.marija.pmsunews.service.ServiceUtils;
+import com.example.marija.pmsunews.service.TagService;
 import com.example.marija.pmsunews.service.UserService;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -53,13 +56,23 @@ public class CreatePostActivity extends AppCompatActivity {
 
     private EditText title_edit;
     private EditText description_edit;
-    private EditText tags_edit;
+    private static EditText tags_edit;
 
     private UserService userService;
     private PostService postService;
+    private static TagService tagService;
+
     private SharedPreferences sharedPreferences;
 
+    private List<Tag> tagsList = new ArrayList<>();
+    private List<Post> postList = new ArrayList<>();
+
+    public static Tag tagResponse;
+    public static Tag tag;
     public static User user;
+    public static Post postResponse;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -138,6 +151,10 @@ public class CreatePostActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 createPost();
+                //setTagsInPost();
+                title_edit.setText("");
+                description_edit.setText("");
+                tags_edit.setText("");
             }
         });
 
@@ -149,6 +166,7 @@ public class CreatePostActivity extends AppCompatActivity {
 
         postService = ServiceUtils.postService;
         userService = ServiceUtils.userService;
+        tagService = ServiceUtils.tagService;
 
         String userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
 
@@ -169,31 +187,80 @@ public class CreatePostActivity extends AppCompatActivity {
 
     }
 
-
-
     public void createPost(){
-        Post post = new Post();
+        final Post post = new Post();
 
         String title = title_edit.getText().toString();
         String description = description_edit.getText().toString();
-        String tags = tags_edit.getText().toString();
         post.setTitle(title);
         post.setDescription(description);
-        //post.setTags(tags);
         post.setAuthor(user);
         post.setLikes(0);
         post.setDislikes(0);
         Date date = Calendar.getInstance().getTime();
         post.setDate(date);
-        Call<ResponseBody> call = postService.createPost(post);
-        call.enqueue(new Callback<ResponseBody>() {
+        Call<Post> call = postService.createPost(post);
+        call.enqueue(new Callback<Post>() {
             @Override
-            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
+            public void onResponse(Call<Post> call, Response<Post> response) {
                 Snackbar.make(findViewById(R.id.coordinator),"Post is created",Snackbar.LENGTH_SHORT).show();
+                postResponse =  response.body();
+
+
             }
 
             @Override
-            public void onFailure(Call<ResponseBody> call, Throwable t) {
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
+
+        addTags();
+
+    }
+
+    public  void addTags(){
+        String tagsString = tags_edit.getText().toString().trim();
+        String[] separated = tagsString.split("#");
+
+        List<String> tagFilter =Arrays.asList(separated);
+        tag = new Tag();
+        for(String tagString : tagFilter.subList(1,tagFilter.size())) {
+            tag.setName(tagString);
+            System.out.println(tag.getName());
+            Call<Tag> callTag = tagService.addTag(tag);
+            callTag.enqueue(new Callback<Tag>() {
+                @Override
+                public void onResponse(Call<Tag> call, Response<Tag> response) {
+                    System.out.println("****Tag created*****");
+                    tagResponse = response.body();
+                    System.out.println(tagResponse);
+                }
+
+                @Override
+                public void onFailure(Call<Tag> call, Throwable t) {
+
+                }
+            });
+        }
+    }
+
+    public void setTagsInPost(){
+
+        int postId = postResponse.getId();
+        System.out.println(postId);
+        int tagId = tagResponse.getId();
+
+        Call<Post> call = postService.setTagsInPost(postId,tagId);
+
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                System.out.println("****Added tags*****");
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
 
             }
         });

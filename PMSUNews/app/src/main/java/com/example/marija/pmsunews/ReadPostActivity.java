@@ -14,6 +14,7 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,11 +33,19 @@ import com.example.marija.pmsunews.model.NavItem;
 import com.example.marija.pmsunews.model.Post;
 import com.example.marija.pmsunews.model.Tag;
 import com.example.marija.pmsunews.model.User;
+import com.example.marija.pmsunews.service.PostService;
+import com.example.marija.pmsunews.service.ServiceUtils;
+import com.example.marija.pmsunews.service.UserService;
+import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ReadPostActivity extends AppCompatActivity {
     private DrawerLayout mDrawerLayout;
@@ -53,7 +62,12 @@ public class ReadPostActivity extends AppCompatActivity {
     private Tag tag = new Tag();
     private ArrayList<Tag> tags = new ArrayList<>();
 
+
+    String userNamePref;
     private SharedPreferences sharedPreferences;
+
+    private PostService postService;
+    private UserService userService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -127,7 +141,34 @@ public class ReadPostActivity extends AppCompatActivity {
             textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
         }
 
+        String jsonMyObject = null;
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            jsonMyObject = extras.getString("Post");
+        }
+        post = new Gson().fromJson(jsonMyObject, Post.class);
 
+        System.out.println(post.getId());
+        postService = ServiceUtils.postService;
+        userService = ServiceUtils.userService;
+
+        userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+
+        Call<User> call = userService.getUserByUsername(userNamePref);
+
+        call.enqueue(new Callback<User>() {
+            @Override
+            public void onResponse(Call<User> call, Response<User> response) {
+                user = response.body();
+            }
+
+            @Override
+            public void onFailure(Call<User> call, Throwable t) {
+
+            }
+        });
+
+        invalidateOptionsMenu();
     }
 
     @Override
@@ -159,6 +200,10 @@ public class ReadPostActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_itemdetail, menu);
+        if(!userNamePref.equals(post.getAuthor().getUsername())) {
+            MenuItem item = menu.findItem(R.id.action_delete);
+            item.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -171,17 +216,39 @@ public class ReadPostActivity extends AppCompatActivity {
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 return true;
-            case R.id.action_edit:
+            /*case R.id.action_edit:
                 Toast.makeText(this,"Edit post",Toast.LENGTH_SHORT).show();
-                return true;
+                return true;*/
             case R.id.action_delete:
-                Toast.makeText(this,"Delete post",Toast.LENGTH_SHORT).show();
+                if(userNamePref.equals(post.getAuthor().getUsername())){
+                    delete();
+                    Toast.makeText(getApplicationContext(),"Post is deleted!",Toast.LENGTH_SHORT).show();
+                    Intent intent = new Intent(this,PostsActivity.class);
+                    startActivity(intent);
+                }else{
+                    Toast.makeText(getApplicationContext(),"You can't delete this",Toast.LENGTH_SHORT).show();
+                }
+
+
         }
 
         return super.onOptionsItemSelected(item);
     }
 
+    public void delete(){
+        Call<Post> call = postService.deletePost(post.getId());
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
 
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
+    }
 
 
     private class DrawerItemClickListener implements ListView.OnItemClickListener {

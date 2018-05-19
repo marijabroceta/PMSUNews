@@ -105,6 +105,8 @@ public class ReadPostFragment extends Fragment {
         }
         post = new Gson().fromJson(jsonMyObject, Post.class);
 
+        post.getId();
+
         TextView title_view = view.findViewById(R.id.title_view);
         title_view.setText(post.getTitle());
 

@@ -40,7 +40,7 @@ public class Post implements Serializable{
     @SerializedName("location")
     @Expose
     private Location location;
-    private ArrayList<Tag> tags;
+    private List<Tag> tags;
     private ArrayList<Comment> comments;
     @SerializedName("likes")
     @Expose
@@ -48,6 +48,22 @@ public class Post implements Serializable{
     @SerializedName("dislikes")
     @Expose
     private int dislikes;
+
+    public Post(int id, String title, String description, Bitmap photo, User author, Date date, int likes, int dislikes) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.photo = photo;
+        this.author = author;
+        this.date = date;
+        this.likes = likes;
+        this.dislikes = dislikes;
+    }
+
+    public Post(){
+
+    }
+
 
     public int getId (){
         return id;
@@ -104,11 +120,11 @@ public class Post implements Serializable{
         this.location = location;
     }
 
-    public ArrayList<Tag> getTags() {
+    public List<Tag> getTags() {
         return tags;
     }
 
-    public void setTags(ArrayList<Tag> tags) {
+    public void setTags(List<Tag> tags) {
         this.tags = tags;
     }
 

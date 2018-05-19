@@ -98,9 +98,13 @@ public class CommentsFragment extends Fragment {
         call.enqueue(new Callback<List<Comment>>() {
             @Override
             public void onResponse(Call<List<Comment>> call, Response<List<Comment>> response) {
+
                 comments = response.body();
+
                 commentListAdapter = new CommentListAdapter(getContext(),comments);
+                commentListAdapter.notifyDataSetChanged();
                 listView.setAdapter(commentListAdapter);
+
                 consultPreferences();
             }
 

@@ -9,6 +9,7 @@ import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Headers;
 import retrofit2.http.POST;
@@ -32,9 +33,15 @@ public interface PostService {
     Call<List<Post>> getPostsByTag(@Path("id") int id);
 
     @POST(ServiceUtils.POSTS)
-    Call<ResponseBody> createPost(@Body Post post);
+    Call<Post> createPost(@Body Post post);
 
     @PUT("posts/{id}")
     Call<Post> addLikeDislike(@Body Post post,@Path("id") int id);
+
+    @PUT("posts/{postId}/{tagId}")
+    Call<Post> setTagsInPost(@Path("postId") int postId,@Path("tagId") int tagId);
+
+    @DELETE("posts/{id}")
+    Call<Post> deletePost(@Path("id") int id);
 
 }

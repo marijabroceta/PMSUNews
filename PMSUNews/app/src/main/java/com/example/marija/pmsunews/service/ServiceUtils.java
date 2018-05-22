@@ -1,10 +1,20 @@
 package com.example.marija.pmsunews.service;
 
+import android.util.Base64;
+
 import com.example.marija.pmsunews.model.Comment;
 import com.example.marija.pmsunews.util.DateSerialization;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializationContext;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 
+import java.lang.reflect.Type;
 import java.text.DateFormat;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -36,8 +46,14 @@ public class ServiceUtils {
         return client;
     }
 
-    static Gson gson = new GsonBuilder()
+    /*static Gson gson = new GsonBuilder()
             .registerTypeAdapter(Date.class, DateSerialization.getUnixEpochDateTypeAdapter())
+            .create();*/
+
+
+
+    static Gson gson = new GsonBuilder()
+            .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
             .create();
 
 

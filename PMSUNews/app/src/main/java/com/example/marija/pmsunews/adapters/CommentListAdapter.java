@@ -16,10 +16,10 @@ import com.example.marija.pmsunews.R;
 import com.example.marija.pmsunews.model.Comment;
 import com.example.marija.pmsunews.service.CommentService;
 import com.example.marija.pmsunews.service.ServiceUtils;
-import com.example.marija.pmsunews.service.UserService;
+
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
+
 import java.util.List;
 
 import retrofit2.Call;
@@ -62,7 +62,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         like_view.setText(String.valueOf(comment.getLikes()));
         dislike_view.setText(String.valueOf(comment.getDislikes()));
 
-        
+
         sharedPreferences  = getContext().getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
         userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
 

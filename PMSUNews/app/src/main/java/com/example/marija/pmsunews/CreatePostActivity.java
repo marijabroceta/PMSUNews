@@ -1,8 +1,12 @@
 package com.example.marija.pmsunews;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -17,6 +21,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.support.v7.widget.Toolbar;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -32,6 +37,11 @@ import com.example.marija.pmsunews.service.ServiceUtils;
 import com.example.marija.pmsunews.service.TagService;
 import com.example.marija.pmsunews.service.UserService;
 
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -67,10 +77,14 @@ public class CreatePostActivity extends AppCompatActivity {
     private List<Tag> tagsList = new ArrayList<>();
     private List<Post> postList = new ArrayList<>();
 
+    private Bitmap bitmap;
+    private byte[] byteArray;
+
     public static Tag tagResponse;
     public static Tag tag;
     public static User user;
     public static Post postResponse;
+    public static Post newPost;
 
 
 
@@ -152,6 +166,7 @@ public class CreatePostActivity extends AppCompatActivity {
             public void onClick(View view) {
                 createPost();
                 //setTagsInPost();
+
                 title_edit.setText("");
                 description_edit.setText("");
                 tags_edit.setText("");
@@ -185,9 +200,10 @@ public class CreatePostActivity extends AppCompatActivity {
         });
 
 
+
     }
 
-    public void createPost(){
+    public void createPost() {
         final Post post = new Post();
 
         String title = title_edit.getText().toString();
@@ -197,7 +213,9 @@ public class CreatePostActivity extends AppCompatActivity {
         post.setAuthor(user);
         post.setLikes(0);
         post.setDislikes(0);
+        //post.setPhoto(bitmap);
         Date date = Calendar.getInstance().getTime();
+
         post.setDate(date);
         Call<Post> call = postService.createPost(post);
         call.enqueue(new Callback<Post>() {
@@ -205,8 +223,8 @@ public class CreatePostActivity extends AppCompatActivity {
             public void onResponse(Call<Post> call, Response<Post> response) {
                 Snackbar.make(findViewById(R.id.coordinator),"Post is created",Snackbar.LENGTH_SHORT).show();
                 postResponse =  response.body();
-
-
+                System.out.println("-------------------");
+                System.out.println(postResponse.getId());
             }
 
             @Override
@@ -216,6 +234,7 @@ public class CreatePostActivity extends AppCompatActivity {
         });
 
         addTags();
+
 
     }
 
@@ -234,7 +253,10 @@ public class CreatePostActivity extends AppCompatActivity {
                 public void onResponse(Call<Tag> call, Response<Tag> response) {
                     System.out.println("****Tag created*****");
                     tagResponse = response.body();
-                    System.out.println(tagResponse);
+                    System.out.println(postResponse.getId());
+                    System.out.println(tagResponse.getId());
+                    setTagsInPost(postResponse.getId(),tagResponse.getId());
+
                 }
 
                 @Override
@@ -245,11 +267,9 @@ public class CreatePostActivity extends AppCompatActivity {
         }
     }
 
-    public void setTagsInPost(){
+    public void setTagsInPost(int postId,int tagId){
 
-        int postId = postResponse.getId();
-        System.out.println(postId);
-        int tagId = tagResponse.getId();
+
 
         Call<Post> call = postService.setTagsInPost(postId,tagId);
 
@@ -264,6 +284,34 @@ public class CreatePostActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+
+        //Detects request codes
+        if(requestCode== 1 && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+
+                ImageView uploaded_photo = findViewById(R.id.uploaded_photo);
+                uploaded_photo.setImageBitmap(bitmap);
+
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+                byteArray = stream.toByteArray();
+            } catch (FileNotFoundException e) {
+
+                e.printStackTrace();
+            } catch (IOException e) {
+
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

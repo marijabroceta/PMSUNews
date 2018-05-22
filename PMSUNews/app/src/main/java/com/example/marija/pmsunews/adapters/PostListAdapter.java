@@ -2,6 +2,8 @@ package com.example.marija.pmsunews.adapters;
 
 import android.content.Context;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -53,7 +55,15 @@ public class PostListAdapter extends ArrayAdapter<Post> {
         date_view.setText(newDate);
         title_view.setText(post.getTitle());
 
-        image_view.setImageBitmap(post.getPhoto());
+         /*while(post.getPhoto() == null){
+             continue;
+         }
+            Bitmap bmp = BitmapFactory.decodeByteArray(post.getPhoto(), 0, post.getPhoto().length);*/
+            image_view.setImageBitmap(post.getPhoto());
+
+
+
+
 
 
         return view;

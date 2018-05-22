@@ -93,6 +93,13 @@
                     android:layout_below="@id/tags_edit"
                     android:text="@string/upload_image_btn"/>
 
+                <ImageView
+                    android:id="@+id/uploaded_photo"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_below="@id/upload_btn"/>
+
 
 
             </RelativeLayout>

@@ -77,6 +77,9 @@ public class ReadPostFragment extends Fragment {
     private int counterLikes;
     private int counterDislikes;
 
+    private boolean clickedLike;
+    private boolean clickedDislike;
+
     SharedPreferences sharedPreferences;
     String userNamePref;
 
@@ -162,29 +165,48 @@ public class ReadPostFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
         userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
 
+        clickedLike = false;
         like_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(userNamePref.equals(post.getAuthor().getUsername())){
                     Toast.makeText(getContext(),"You can't like your post",Toast.LENGTH_SHORT).show();
                 }else{
-                    addLike();
-                    like_text.setText(String.valueOf(post.getLikes()));
-                    like_view.setEnabled(false);
-
+                    if(clickedLike == false){
+                        addLike();
+                        like_text.setText(String.valueOf(post.getLikes()));
+                        clickedLike = true;
+                        dislike_view.setEnabled(false);
+                    }else{
+                        removeLike();
+                        like_text.setText(String.valueOf(post.getLikes()));
+                        clickedLike = false;
+                        dislike_view.setEnabled(true);
+                    }
                 }
             }
         });
 
+
+        clickedDislike = false;
         dislike_view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(userNamePref.equals(post.getAuthor().getUsername())){
                     Toast.makeText(getContext(),"You can't dislike your post",Toast.LENGTH_SHORT).show();
                 }else{
-                    addDislike();
-                    dislike_text.setText(String.valueOf(post.getDislikes()));
-                    dislike_view.setEnabled(false);
+                    if(clickedDislike == false){
+                        addDislike();
+                        dislike_text.setText(String.valueOf(post.getDislikes()));
+                        clickedDislike = true;
+                        like_view.setEnabled(false);
+                    }else{
+
+                        removeDislike();
+                        dislike_text.setText(String.valueOf(post.getDislikes()));
+                        clickedDislike = false;
+                        like_view.setEnabled(false);
+                    }
 
                 }
             }
@@ -254,6 +276,40 @@ public class ReadPostFragment extends Fragment {
             }
         });
 
+    }
+
+    public void removeLike(){
+        counterLikes = post.getLikes();
+        post.setLikes(counterLikes-1);
+        Call<Post> call = postService.addLikeDislike(post,post.getId());
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                like_view.setImageResource(R.drawable.ic_action_like_white);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void removeDislike(){
+        counterDislikes = post.getDislikes();
+        post.setDislikes(counterDislikes - 1);
+        Call<Post> call = postService.addLikeDislike(post,post.getId());
+        call.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                dislike_view.setImageResource(R.drawable.ic_action_dislike_white);
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
     }
 
 }

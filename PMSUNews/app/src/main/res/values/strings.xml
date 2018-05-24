@@ -26,6 +26,8 @@
     <string name="create_post_long">Create new post</string>
     <string name="logout">LogOut</string>
     <string name="logout_long">Logout from the app</string>
+    <string name="map">Map</string>
+    <string name="map_long">Open map</string>
 
     <string name="pref_pick_date_key">pref_pick_date_key</string>
     <string name="pref_pick_date_title">Pick date</string>
@@ -53,6 +55,9 @@
     <string name="pref_sort_comment_by_popularity_key">pref_sort_comment_by_popularity_key</string>
     <string name="pref_sort_comments_by_popularity_title">Sort by popularity</string>
     <string name="pref_sort_comments_by_popularity_summ">Sort comments by popularity</string>
-    
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+
 
 </resources>

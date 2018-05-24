@@ -27,6 +27,8 @@ public class LoginActivity extends AppCompatActivity {
     public static final String MyPreferances = "MyPrefs";
     public static final String Username = "usernameKey";
     public static final String Name = "nameKey";
+    public static final String Longitude = "longitudeKey";
+    public static final String Latitude = "latitudeKey";
     private UserService userService;
     private EditText editUsername;
     private EditText editPassword;

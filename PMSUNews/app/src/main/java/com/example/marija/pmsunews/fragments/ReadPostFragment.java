@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Bundle;
 
 import android.support.annotation.Nullable;
@@ -38,6 +40,7 @@ import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -45,6 +48,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Locale;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
@@ -66,7 +70,7 @@ public class ReadPostFragment extends Fragment {
 
 
     private TextView tags_view;
-    private TextView tag_view;
+    private TextView place;
     private ImageButton like_view;
     private ImageButton dislike_view;
 
@@ -110,6 +114,8 @@ public class ReadPostFragment extends Fragment {
 
         post.getId();
 
+
+
         TextView title_view = view.findViewById(R.id.title_view);
         title_view.setText(post.getTitle());
 
@@ -129,6 +135,9 @@ public class ReadPostFragment extends Fragment {
         final TextView dislike_text = view.findViewById(R.id.dislike_text);
         dislike_text.setText(String.valueOf(post.getDislikes()));
 
+        place = view.findViewById(R.id.place);
+        //place.setText();
+
         linearLayout = view.findViewById(R.id.linear_layout);
 
         tags_view = view.findViewById(R.id.tags_view);
@@ -143,8 +152,8 @@ public class ReadPostFragment extends Fragment {
             public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
                 tags = response.body();
 
-                newLinearLayout = new LinearLayout(getContext());
-                newLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
+                //newLinearLayout = new LinearLayout(getContext());
+                //newLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
                 String empty = "";
                 for(Tag t:tags) {
@@ -213,6 +222,7 @@ public class ReadPostFragment extends Fragment {
         });
 
 
+        getAddress();
 
 
         ImageView image_view = view.findViewById(R.id.image_view);
@@ -310,6 +320,28 @@ public class ReadPostFragment extends Fragment {
 
             }
         });
+    }
+
+    public void getAddress(){
+        Geocoder geocoder;
+        List<Address> addresses;
+        geocoder = new Geocoder(getContext(), Locale.getDefault());
+
+        double lon = post.getLongitude();
+        double lat = post.getLatitude();
+        try {
+            addresses = geocoder.getFromLocation(lat, lon, 1);
+            String city = addresses.get(0).getLocality();
+            String country = addresses.get(0).getCountryName();
+            place.setText(city + "," + country);
+
+
+            System.out.println(city);
+            System.out.println(country);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }

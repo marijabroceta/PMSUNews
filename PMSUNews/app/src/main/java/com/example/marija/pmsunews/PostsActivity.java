@@ -30,6 +30,7 @@ import android.widget.Toast;
 
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
 import com.example.marija.pmsunews.adapters.PostListAdapter;
+import com.example.marija.pmsunews.fragments.MapFragment;
 import com.example.marija.pmsunews.fragments.ReadPostFragment;
 import com.example.marija.pmsunews.model.NavItem;
 import com.example.marija.pmsunews.model.Post;
@@ -37,6 +38,7 @@ import com.example.marija.pmsunews.model.Tag;
 import com.example.marija.pmsunews.model.User;
 import com.example.marija.pmsunews.service.PostService;
 import com.example.marija.pmsunews.service.ServiceUtils;
+import com.example.marija.pmsunews.tools.FragmentTransition;
 import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
@@ -234,8 +236,8 @@ public class PostsActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-        finish();
-        startActivity(getIntent());
+       /* finish();
+        startActivity(getIntent());*/
 
     }
 
@@ -291,6 +293,7 @@ public class PostsActivity extends AppCompatActivity {
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
         mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
+        mNavItems.add(new NavItem(getString(R.string.map),getString(R.string.map_long),R.drawable.ic_map));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
         mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
     }
@@ -332,13 +335,15 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     private void selectItemFromDrawer(int position){
-        if(position == 0){
-            Intent createIntent = new Intent(this,CreatePostActivity.class);
+        if(position == 0) {
+            Intent createIntent = new Intent(this, CreatePostActivity.class);
             startActivity(createIntent);
         }else if(position == 1){
+            FragmentTransition.to(MapFragment.newInstance(),this,false);
+        }else if(position == 2){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
-        }else if(position == 2) {
+        }else if(position == 3) {
             SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 

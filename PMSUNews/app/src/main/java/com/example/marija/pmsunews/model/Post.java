@@ -37,9 +37,15 @@ public class Post implements Serializable{
     @SerializedName("date")
     @Expose
     private Date date;
-    @SerializedName("location")
+    //@SerializedName("location")
+    //@Expose
+    //private Location location;
+    @SerializedName("longitude")
     @Expose
-    private Location location;
+    private double longitude;
+    @SerializedName("latitude")
+    @Expose
+    private double latitude;
     private List<Tag> tags;
     private ArrayList<Comment> comments;
     @SerializedName("likes")
@@ -113,12 +119,28 @@ public class Post implements Serializable{
         this.date = date;
     }
 
-    public Location getLocation() {
+    /*public Location getLocation() {
         return location;
     }
 
     public void setLocation(Location location) {
         this.location = location;
+    }*/
+
+    public double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(double longitude) {
+        this.longitude = longitude;
+    }
+
+    public double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(double latitude) {
+        this.latitude = latitude;
     }
 
     public List<Tag> getTags() {

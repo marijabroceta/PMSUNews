@@ -85,12 +85,32 @@
                     android:layout_below="@id/description_edit"
                     android:hint="@string/tags"/>
 
+                <EditText
+                    android:id="@+id/location_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/tags_edit"
+                    android:layout_margin="10dp"
+                    android:hint="Location..."
+                    android:clickable="false"
+                    android:cursorVisible="false"
+                    android:focusable="false"
+                    android:focusableInTouchMode="false"/>
+
+                <Button
+                    android:id="@+id/location_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/location_edit"
+                    android:layout_margin="10dp"
+                    android:text="Get location"/>
+
                 <Button
                     android:id="@+id/upload_btn"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_below="@id/tags_edit"
+                    android:layout_below="@id/location_btn"
                     android:text="@string/upload_image_btn"/>
 
                 <ImageView
@@ -98,7 +118,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="160dp"
                     android:layout_marginTop="15dp"
-                    android:layout_below="@id/upload_btn"/>
+                    android:layout_marginRight="10dp"
+                    android:layout_toRightOf="@id/upload_btn"
+                    android:layout_below="@id/location_edit"/>
 
 
 

@@ -95,7 +95,7 @@ public class MapFragment extends Fragment implements LocationListener,OnMapReady
         boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean wifi = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if(!gps &&  wifi){
+        if(!gps && !wifi){
             showLocatonDialog();
         }else{
             if(checkLocationPermission()){
@@ -144,8 +144,10 @@ public class MapFragment extends Fragment implements LocationListener,OnMapReady
     }
 
     public boolean checkLocationPermission(){
+        System.out.println("CHECK PERMISSION");
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED){
             if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),Manifest.permission.ACCESS_FINE_LOCATION)){
+
                 new AlertDialog.Builder(getActivity())
                         .setTitle("Allow user location")
                         .setMessage("To continue working we need your locations... Allow now?")
@@ -223,15 +225,6 @@ public class MapFragment extends Fragment implements LocationListener,OnMapReady
         System.out.println("LATITUDE: " + location.getLatitude());
         System.out.println("LONGITUDE: " + location.getLongitude());
 
-        double longitude = location.getLongitude();
-        double latitude = location.getLatitude();
-
-        /*sharedPreferences = getActivity().getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(LoginActivity.Latitude,String.valueOf(latitude));
-        editor.putString(LoginActivity.Longitude,String.valueOf(longitude));
-        editor.commit();
-*/
 
         if(home != null){
             home.remove();

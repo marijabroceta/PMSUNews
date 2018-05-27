@@ -50,6 +50,7 @@ import com.example.marija.pmsunews.service.PostService;
 import com.example.marija.pmsunews.service.ServiceUtils;
 import com.example.marija.pmsunews.service.TagService;
 import com.example.marija.pmsunews.service.UserService;
+import com.example.marija.pmsunews.tools.FragmentTransition;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.ByteArrayOutputStream;
@@ -85,15 +86,13 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     private static EditText tags_edit;
     private Button location_btn;
     private EditText location_text;
+    private FloatingActionButton fab;
 
     private UserService userService;
     private PostService postService;
     private static TagService tagService;
 
     private SharedPreferences sharedPreferences;
-
-    private List<Tag> tagsList = new ArrayList<>();
-    private List<Post> postList = new ArrayList<>();
 
     private Bitmap bitmap;
     private byte[] byteArray;
@@ -102,7 +101,6 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     public static Tag tag;
     public static User user;
     public static Post postResponse;
-    public static Post newPost;
 
     private double longitude;
     private double latitude;
@@ -120,13 +118,8 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         setContentView(R.layout.activity_create_post);
 
         title_edit = findViewById(R.id.title_edit);
-
-
         description_edit = findViewById(R.id.description_edit);
-
-
         tags_edit = findViewById(R.id.tags_edit);
-
 
         Button upload_btn = findViewById(R.id.upload_btn);
         upload_btn.setOnClickListener(new View.OnClickListener() {
@@ -137,10 +130,6 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                 startActivityForResult(Intent.createChooser(intent, "Complete action using"), 1);
             }
         });
-
-
-
-
 
         prepareMenu(mNavItems);
 
@@ -160,7 +149,6 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
 
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            //actionBar.setIcon(R.drawable.ic_launcher_background);
             actionBar.setHomeAsUpIndicator(R.drawable.ic_drawer);
             actionBar.setHomeButtonEnabled(true);
         }
@@ -186,18 +174,16 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+        fab = findViewById(R.id.fab);
+        /*fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 createPost();
-                //setTagsInPost();
-
                 title_edit.setText("");
                 description_edit.setText("");
                 tags_edit.setText("");
             }
-        });
+        });*/
 
         TextView textViewUser = findViewById(R.id.user);
         sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
@@ -227,10 +213,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
 
         location_text = findViewById(R.id.location_edit);
         location_btn = findViewById(R.id.location_btn);
-
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-
-
     }
 
     public void createPost() {
@@ -265,9 +248,10 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
             }
         });
 
-        addTags();
 
+        //addTags();
 
+        System.out.println("*****POST***********");
     }
 
     public  void addTags(){
@@ -297,11 +281,12 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                 }
             });
         }
+
+        System.out.println("*****POST 111111***********");
+
     }
 
     public void setTagsInPost(int postId,int tagId){
-
-
 
         Call<Post> call = postService.setTagsInPost(postId,tagId);
 
@@ -362,6 +347,18 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     protected void onResume() {
         super.onResume();
 
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                System.out.println("*****CLICKED***********");
+                createPost();
+                addTags();
+                title_edit.setText("");
+                description_edit.setText("");
+                tags_edit.setText("");
+            }
+        });
+
         location_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -383,6 +380,8 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
         mNavItems.add(new NavItem(getString(R.string.home), getString(R.string.all_post), R.drawable.ic_action_home));
+        mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
+        mNavItems.add(new NavItem(getString(R.string.map),getString(R.string.map_long),R.drawable.ic_map));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
         mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
 
@@ -453,13 +452,18 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     }
 
     private void selectItemFromDrawer(int position){
-        if(position == 0){
+        if(position == 0) {
             Intent homeIntent = new Intent(this, PostsActivity.class);
             startActivity(homeIntent);
-        }else if(position == 1){
+        }else if(position == 1) {
+            Intent createIntent = new Intent(this,CreatePostActivity.class);
+            startActivity(createIntent);
+        }else if(position == 2){
+            FragmentTransition.to(MapFragment.newInstance(),this,false);
+        }else if(position == 3){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
-        }else if(position == 2){
+        }else if(position == 4){
             sharedPreferences.edit().clear().commit();
             Intent logoutIntent = new Intent(this,LoginActivity.class);
             startActivity(logoutIntent);
@@ -480,6 +484,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     @Override
     protected void onPause() {
         super.onPause();
+        locationManager.removeUpdates(this);
     }
 
     @Override
@@ -501,7 +506,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         boolean gps = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
         boolean wifi = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
-        if(!gps &&  wifi){
+        if(!gps &&  !wifi){
             showLocatonDialog();
         }else{
             if(checkLocationPermission()){
@@ -573,5 +578,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         }
 
     }
+
+
 
 }

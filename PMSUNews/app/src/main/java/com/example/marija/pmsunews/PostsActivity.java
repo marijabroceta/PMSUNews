@@ -7,6 +7,8 @@ import android.content.res.Configuration;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.location.Address;
+import android.location.Geocoder;
 import android.os.Handler;
 import android.preference.CheckBoxPreference;
 import android.preference.PreferenceManager;
@@ -43,12 +45,14 @@ import com.google.gson.Gson;
 
 import java.io.ByteArrayOutputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -67,6 +71,7 @@ public class PostsActivity extends AppCompatActivity {
 
     private PostListAdapter postListAdapter;
     private ListView listView;
+
     private PostService postService;
 
     private Post post = new Post();
@@ -148,9 +153,6 @@ public class PostsActivity extends AppCompatActivity {
         postService = ServiceUtils.postService;
 
         Call call = postService.getPosts();
-
-
-
         call.enqueue(new Callback<List<Post>>() {
             @Override
             public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
@@ -159,17 +161,11 @@ public class PostsActivity extends AppCompatActivity {
                 listView.setAdapter(postListAdapter);
                 consultPreferences();
             }
-
             @Override
             public void onFailure(Call<List<Post>> call, Throwable t) {
                t.printStackTrace();
             }
         });
-
-
-
-
-
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -224,6 +220,8 @@ public class PostsActivity extends AppCompatActivity {
 
 
 
+
+
     }
 
 
@@ -236,8 +234,8 @@ public class PostsActivity extends AppCompatActivity {
     @Override
     protected void onRestart() {
         super.onRestart();
-       /* finish();
-        startActivity(getIntent());*/
+        finish();
+        startActivity(getIntent());
 
     }
 
@@ -292,6 +290,7 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
+        mNavItems.add(new NavItem(getString(R.string.home),getString(R.string.all_post),R.drawable.ic_action_home));
         mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
         mNavItems.add(new NavItem(getString(R.string.map),getString(R.string.map_long),R.drawable.ic_map));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
@@ -336,14 +335,17 @@ public class PostsActivity extends AppCompatActivity {
 
     private void selectItemFromDrawer(int position){
         if(position == 0) {
+            Intent postIntent = new Intent(this,PostsActivity.class);
+            startActivity(postIntent);
+        }else if(position == 1){
             Intent createIntent = new Intent(this, CreatePostActivity.class);
             startActivity(createIntent);
-        }else if(position == 1){
-            FragmentTransition.to(MapFragment.newInstance(),this,false);
         }else if(position == 2){
+            FragmentTransition.to(MapFragment.newInstance(),this,false);
+        }else if(position == 3){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
-        }else if(position == 3) {
+        }else if(position == 4) {
             SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -381,5 +383,7 @@ public class PostsActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
     }
+
+
 
 }

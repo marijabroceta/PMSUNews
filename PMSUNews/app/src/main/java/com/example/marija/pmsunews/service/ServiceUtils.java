@@ -1,9 +1,11 @@
 package com.example.marija.pmsunews.service;
 
+import android.graphics.Bitmap;
 import android.util.Base64;
 
 import com.example.marija.pmsunews.model.Comment;
 import com.example.marija.pmsunews.util.DateSerialization;
+import com.example.marija.pmsunews.util.ImageSerialization;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonDeserializationContext;
@@ -46,15 +48,14 @@ public class ServiceUtils {
         return client;
     }
 
-    /*static Gson gson = new GsonBuilder()
-            .registerTypeAdapter(Date.class, DateSerialization.getUnixEpochDateTypeAdapter())
-            .create();*/
+    static Gson gson = new GsonBuilder()
+            .registerTypeAdapter(Bitmap.class, ImageSerialization.getBitmapTypeAdapter()).setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ").create();
 
 
-
+/*
     static Gson gson = new GsonBuilder()
             .setDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ")
-            .create();
+            .create();*/
 
 
     public static Retrofit retrofit = new Retrofit.Builder()

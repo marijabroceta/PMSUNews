@@ -37,9 +37,6 @@ public class Post implements Serializable{
     @SerializedName("date")
     @Expose
     private Date date;
-    //@SerializedName("location")
-    //@Expose
-    //private Location location;
     @SerializedName("longitude")
     @Expose
     private double longitude;

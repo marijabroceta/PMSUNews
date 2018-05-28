@@ -228,7 +228,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         post.setDislikes(0);
         post.setLongitude(longitude);
         post.setLatitude(latitude);
-        //post.setPhoto(bitmap);
+        post.setPhoto(bitmap);
         Date date = Calendar.getInstance().getTime();
 
         post.setDate(date);
@@ -249,7 +249,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         });
 
 
-        //addTags();
+        addTags();
 
         System.out.println("*****POST***********");
     }
@@ -318,12 +318,6 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                 ImageView uploaded_photo = findViewById(R.id.uploaded_photo);
                 uploaded_photo.setImageBitmap(bitmap);
 
-                ByteArrayOutputStream stream = new ByteArrayOutputStream();
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
-                byteArray = stream.toByteArray();
-            } catch (FileNotFoundException e) {
-
-                e.printStackTrace();
             } catch (IOException e) {
 
                 e.printStackTrace();
@@ -352,7 +346,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
             public void onClick(View view) {
                 System.out.println("*****CLICKED***********");
                 createPost();
-                addTags();
+
                 title_edit.setText("");
                 description_edit.setText("");
                 tags_edit.setText("");
@@ -415,6 +409,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     public void onLocationChanged(Location location) {
         longitude = location.getLongitude();
         latitude = location.getLatitude();
+        System.out.println("******************");
     }
 
     @Override
@@ -514,11 +509,13 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                         android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
                     locationManager.requestLocationUpdates(provider,0,0,this);
+                    System.out.println("FINE LOC");
 
                 }else if(ContextCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
                     locationManager.requestLocationUpdates(provider,0,0,this);
+                    System.out.println("COARSE LOC");
                 }
             }
         }
@@ -548,8 +545,10 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                         })
                         .create()
                         .show();
+
             }else{
                 ActivityCompat.requestPermissions(this,new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},MY_PERMISSIONS_REQUEST_LOCATION);
+
             }
             return false;
         }else{

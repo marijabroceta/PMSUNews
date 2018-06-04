@@ -4,18 +4,18 @@
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:title="Settings"
         app:showAsAction="never"/>
-    <!--<item
+    <item
         android:id="@+id/action_edit"
         android:title="Edit post"
         android:icon="@drawable/ic_action_edit_white"
         android:orderInCategory="100"
-        app:showAsAction="ifRoom"/>-->
+        app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_delete"
-        android:orderInCategory="100"
+        android:orderInCategory="200"
         android:icon="@drawable/ic_action_delete_white"
         android:title="Delete post"
         app:showAsAction="ifRoom"/>

@@ -64,11 +64,19 @@ public class ReadPostFragment extends Fragment {
     View view;
 
     private Post post;
+    private Integer postId;
 
     private TagService tagService;
     private PostService postService;
 
 
+    private TextView title_view;
+    private TextView author_view;
+    private TextView date_view;
+    private TextView description_view;
+    private TextView like_text;
+    private TextView dislike_text;
+    private ImageView image_view;
     private TextView tags_view;
     private TextView place;
     private ImageButton like_view;
@@ -84,8 +92,8 @@ public class ReadPostFragment extends Fragment {
     private boolean clickedLike;
     private boolean clickedDislike;
 
-    SharedPreferences sharedPreferences;
-    String userNamePref;
+    private SharedPreferences sharedPreferences;
+    private String userNamePref;
 
     public ReadPostFragment(){
 
@@ -95,8 +103,6 @@ public class ReadPostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState){
 
-
-
         view = inflater.inflate(R.layout.read_post_fragment,container,false);
         return view;
     }
@@ -105,55 +111,53 @@ public class ReadPostFragment extends Fragment {
     public void onViewCreated(final View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        String jsonMyObject = null;
-        Bundle extras = getActivity().getIntent().getExtras();
-        if (extras != null) {
-            jsonMyObject = extras.getString("Post");
-        }
-        post = new Gson().fromJson(jsonMyObject, Post.class);
-
-        post.getId();
-
-
-
-        TextView title_view = view.findViewById(R.id.title_view);
-        title_view.setText(post.getTitle());
-
-        TextView author_view = view.findViewById(R.id.author_view);
-        author_view.setText(post.getAuthor().getName());
-
-        TextView date_view = view.findViewById(R.id.date_view);
-        String newDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(post.getDate());
-        date_view.setText(newDate);
-
-        TextView description_view = view.findViewById(R.id.description_view);
-        description_view.setText(post.getDescription());
-
-        final TextView like_text = view.findViewById(R.id.like_text);
-        like_text.setText(String.valueOf(post.getLikes()));
-
-        final TextView dislike_text = view.findViewById(R.id.dislike_text);
-        dislike_text.setText(String.valueOf(post.getDislikes()));
-
+        title_view = view.findViewById(R.id.title_view);
+        author_view = view.findViewById(R.id.author_view);
+        date_view = view.findViewById(R.id.date_view);
+        description_view = view.findViewById(R.id.description_view);
+        like_text = view.findViewById(R.id.like_text);
+        dislike_text = view.findViewById(R.id.dislike_text);
+        image_view = view.findViewById(R.id.image_view);
         place = view.findViewById(R.id.place);
-        //place.setText();
-
         linearLayout = view.findViewById(R.id.linear_layout);
-
         tags_view = view.findViewById(R.id.tags_view);
-        tags_view.setText(getActivity().getIntent().getStringExtra("tags"));
+
         postService = ServiceUtils.postService;
         tagService = ServiceUtils.tagService;
 
-        Call<List<Tag>> call = tagService.getTagsByPost(post.getId());
+        postId = getActivity().getIntent().getIntExtra("postId", 0);
+
+        Call<Post> callPost = postService.getPost(postId);
+
+        callPost.enqueue(new Callback<Post>() {
+            @Override
+            public void onResponse(Call<Post> call, Response<Post> response) {
+                post = response.body();
+                if(post != null){
+                    title_view.setText(post.getTitle());
+                    author_view.setText(post.getAuthor().getName());
+                    String newDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(post.getDate());
+                    date_view.setText(newDate);
+                    description_view.setText(post.getDescription());
+                    image_view.setImageBitmap(post.getPhoto());
+                    like_text.setText(String.valueOf(post.getLikes()));
+                    dislike_text.setText(String.valueOf(post.getDislikes()));
+                    getAddress(post.getLatitude(),post.getLongitude());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Post> call, Throwable t) {
+
+            }
+        });
+
+        Call<List<Tag>> call = tagService.getTagsByPost(postId);
 
         call.enqueue(new Callback<List<Tag>>() {
             @Override
             public void onResponse(Call<List<Tag>> call, Response<List<Tag>> response) {
                 tags = response.body();
-
-                //newLinearLayout = new LinearLayout(getContext());
-                //newLinearLayout.setOrientation(LinearLayout.HORIZONTAL);
 
                 String empty = "";
                 for(Tag t:tags) {
@@ -221,27 +225,6 @@ public class ReadPostFragment extends Fragment {
             }
         });
 
-
-        getAddress();
-
-
-        ImageView image_view = view.findViewById(R.id.image_view);
-        //Bitmap bitmap = BitmapFactory.decodeResource(getResources(),R.drawable.avengers1);
-        //post.setPhoto(bitmap);
-
-/*
-        Bitmap bmp = null;
-        String filename = getActivity().getIntent().getStringExtra("photo");
-        try {
-            FileInputStream is = getActivity().openFileInput(filename);
-            bmp = BitmapFactory.decodeStream(is);
-            is.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        image_view.setImageBitmap(bmp);*/
-
-
     }
 
 
@@ -254,7 +237,7 @@ public class ReadPostFragment extends Fragment {
         System.out.println(post.getId());
         System.out.println(post.getLikes());
 
-        Call<Post> call = postService.addLikeDislike(post,post.getId());
+        Call<Post> call = postService.editPost(post,post.getId());
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
@@ -273,7 +256,7 @@ public class ReadPostFragment extends Fragment {
         counterDislikes = post.getDislikes();
         post.setDislikes(counterDislikes+1);
 
-        Call<Post> call = postService.addLikeDislike(post,post.getId());
+        Call<Post> call = postService.editPost(post,post.getId());
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
@@ -291,7 +274,7 @@ public class ReadPostFragment extends Fragment {
     public void removeLike(){
         counterLikes = post.getLikes();
         post.setLikes(counterLikes-1);
-        Call<Post> call = postService.addLikeDislike(post,post.getId());
+        Call<Post> call = postService.editPost(post,post.getId());
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
@@ -308,7 +291,7 @@ public class ReadPostFragment extends Fragment {
     public void removeDislike(){
         counterDislikes = post.getDislikes();
         post.setDislikes(counterDislikes - 1);
-        Call<Post> call = postService.addLikeDislike(post,post.getId());
+        Call<Post> call = postService.editPost(post,post.getId());
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {
@@ -322,15 +305,15 @@ public class ReadPostFragment extends Fragment {
         });
     }
 
-    public void getAddress(){
+    public void getAddress(double latituda,double longituda){
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(getContext(), Locale.getDefault());
 
-        double lon = post.getLongitude();
-        double lat = post.getLatitude();
+        //double lon = post.getLongitude();
+        //double lat = post.getLatitude();
         try {
-            addresses = geocoder.getFromLocation(lat, lon, 1);
+            addresses = geocoder.getFromLocation(latituda, longituda, 1);
             String city = addresses.get(0).getLocality();
             String country = addresses.get(0).getCountryName();
             place.setText(city + "," + country);

@@ -79,7 +79,8 @@ public class PostsActivity extends AppCompatActivity {
     public static ArrayList<Tag> tags = new ArrayList<>();
 
     private boolean sortPostByDate;
-    private boolean sortPostByPopularity;
+    private boolean sortPostByLikes;
+    private boolean sortPostByDislikes;
 
 
     private SharedPreferences sharedPreferences;
@@ -180,7 +181,8 @@ public class PostsActivity extends AppCompatActivity {
                     public void onResponse(Call<Post> call, Response<Post> response) {
                         post = response.body();
                         Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
-                        intent.putExtra("Post",new Gson().toJson(post));
+                        intent.putExtra("postId",post.getId());
+                        intent.putExtra("user",post.getAuthor().getUsername());
 
                         startActivity(intent);
                     }
@@ -191,40 +193,11 @@ public class PostsActivity extends AppCompatActivity {
                     }
                 });
 
-                //Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
-
-                /*try {
-                    String fileName = "drawable";
-                    Bitmap mBitmap = post.getPhoto();
-
-                    ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                    mBitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes);
-
-                    FileOutputStream fileOutputStream = openFileOutput(fileName,Context.MODE_PRIVATE);
-                    mBitmap.compress(Bitmap.CompressFormat.PNG, 100, fileOutputStream);
-
-                    fileOutputStream.write(bytes.toByteArray());
-                    fileOutputStream.close();
-
-                    intent.putExtra("photo",fileName);
-
-                }catch (Exception e){
-                    e.printStackTrace();
-                }*/
             }
         });
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-
-        //consultPreferences();
-
-
-
-
-
     }
-
-
 
     @Override
     protected void onStart() {
@@ -236,51 +209,80 @@ public class PostsActivity extends AppCompatActivity {
         super.onRestart();
         finish();
         startActivity(getIntent());
-
     }
 
 
     private void consultPreferences(){
         sortPostByDate = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_date_key),false);
-        sortPostByPopularity = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_popularity_key),false);
+        sortPostByLikes = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_like_key),false);
+        sortPostByDislikes = sharedPreferences.getBoolean(getString(R.string.pref_sort_post_by_dislike_key),false);
 
         if(sortPostByDate == true) {
             sortDate();
         }
 
-        if(sortPostByPopularity == true){
-            sortByPopularity();
+        if(sortPostByLikes == true){
+            sortByLikes();
+        }
+
+        if(sortPostByDislikes == true){
+            setSortPostByDislikes();
         }
     }
 
 
     public void sortDate(){
-        Collections.sort(posts, new Comparator<Post>() {
+        Call<List<Post>> call = postService.sortByDate();
+        call.enqueue(new Callback<List<Post>>() {
             @Override
-            public int compare(Post post, Post post1) {
-                return post1.getDate().compareTo(post.getDate());
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                posts = response.body();
+                postListAdapter = new PostListAdapter(getApplicationContext(),posts);
+                listView.setAdapter(postListAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+
             }
         });
-
-
         postListAdapter.notifyDataSetChanged();
     }
 
-    public void sortByPopularity(){
+    public void sortByLikes(){
 
-        Collections.sort(posts, new Comparator<Post>() {
+       Call<List<Post>> call = postService.sortByLikes();
+       call.enqueue(new Callback<List<Post>>() {
+           @Override
+           public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+               posts = response.body();
+               postListAdapter = new PostListAdapter(getApplicationContext(),posts);
+               listView.setAdapter(postListAdapter);
+           }
+
+           @Override
+           public void onFailure(Call<List<Post>> call, Throwable t) {
+
+           }
+       });
+        postListAdapter.notifyDataSetChanged();
+    }
+
+    public void setSortPostByDislikes(){
+        Call<List<Post>> call = postService.sortByDislikes();
+        call.enqueue(new Callback<List<Post>>() {
             @Override
-            public int compare(Post post, Post post1) {
-                int first;
-                int second ;
-                first = post.getLikes() - post.getDislikes();
-                second = post1.getLikes() - post1.getDislikes();
-                return Integer.valueOf(second).compareTo(first);
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                posts = response.body();
+                postListAdapter = new PostListAdapter(getApplicationContext(),posts);
+                listView.setAdapter(postListAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+
             }
         });
-
-
-        postListAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -312,9 +314,6 @@ public class PostsActivity extends AppCompatActivity {
             case R.id.action_settings:
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
-                return true;
-            case R.id.action_create_post:
-                Toast.makeText(this,"Create post",Toast.LENGTH_SHORT).show();
                 return true;
             case R.id.action_search:
                 Toast.makeText(this,"Search",Toast.LENGTH_SHORT).show();

@@ -70,6 +70,7 @@ import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
+import retrofit2.http.POST;
 
 @SuppressWarnings("deprecation")
 public class CreatePostActivity extends AppCompatActivity implements LocationListener {
@@ -94,8 +95,12 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
 
     private SharedPreferences sharedPreferences;
 
+    private Integer postId;
+    private Post post;
     private Bitmap bitmap;
-    private byte[] byteArray;
+
+    String city;
+    String country;
 
     public static Tag tagResponse;
     public static Tag tag;
@@ -175,15 +180,6 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         mDrawerToggle.syncState();
 
         fab = findViewById(R.id.fab);
-        /*fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                createPost();
-                title_edit.setText("");
-                description_edit.setText("");
-                tags_edit.setText("");
-            }
-        });*/
 
         TextView textViewUser = findViewById(R.id.user);
         sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
@@ -196,6 +192,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         tagService = ServiceUtils.tagService;
 
         String userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+        System.out.println(userNamePref);
 
         Call<User> call = userService.getUserByUsername(userNamePref);
 
@@ -214,6 +211,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         location_text = findViewById(R.id.location_edit);
         location_btn = findViewById(R.id.location_btn);
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
     }
 
     public void createPost() {
@@ -238,8 +236,9 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
             public void onResponse(Call<Post> call, Response<Post> response) {
                 Snackbar.make(findViewById(R.id.coordinator),"Post is created",Snackbar.LENGTH_SHORT).show();
                 postResponse =  response.body();
-                System.out.println("-------------------");
-                System.out.println(postResponse.getId());
+
+                setTagsInPost(postResponse.getId(),tagResponse.getId());
+
             }
 
             @Override
@@ -247,12 +246,10 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
 
             }
         });
-
-
-        addTags();
-
-        System.out.println("*****POST***********");
+        //addTags();
     }
+
+
 
     public  void addTags(){
         String tagsString = tags_edit.getText().toString().trim();
@@ -269,10 +266,8 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                 public void onResponse(Call<Tag> call, Response<Tag> response) {
                     System.out.println("****Tag created*****");
                     tagResponse = response.body();
-                    System.out.println(postResponse.getId());
-                    System.out.println(tagResponse.getId());
-                    setTagsInPost(postResponse.getId(),tagResponse.getId());
 
+                    System.out.println(tagResponse.getId());
                 }
 
                 @Override
@@ -281,9 +276,6 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                 }
             });
         }
-
-        System.out.println("*****POST 111111***********");
-
     }
 
     public void setTagsInPost(int postId,int tagId){
@@ -330,11 +322,13 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     @Override
     protected void onStart() {
         super.onStart();
+
     }
 
     @Override
     protected void onRestart() {
         super.onRestart();
+
     }
 
     @Override
@@ -344,12 +338,14 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                System.out.println("*****CLICKED***********");
+
+                addTags();
                 createPost();
 
                 title_edit.setText("");
                 description_edit.setText("");
                 tags_edit.setText("");
+                location_text.setText("");
             }
         });
 
@@ -362,7 +358,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                     Toast.makeText(getApplicationContext(), "Location not found", Toast.LENGTH_SHORT).show();
                 }
                 if (location != null) {
-                    System.out.println("LONGITUDEEE: "+location.getLongitude() + "LATITUDEEEE:" + location.getLatitude());
+
                     getAddress(location.getLatitude(),location.getLongitude());
                     onLocationChanged(location);
                 }
@@ -409,7 +405,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     public void onLocationChanged(Location location) {
         longitude = location.getLongitude();
         latitude = location.getLatitude();
-        System.out.println("******************");
+
     }
 
     @Override
@@ -509,13 +505,13 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                         android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
                     locationManager.requestLocationUpdates(provider,0,0,this);
-                    System.out.println("FINE LOC");
+
 
                 }else if(ContextCompat.checkSelfPermission(this,
                         Manifest.permission.ACCESS_COARSE_LOCATION) == PackageManager.PERMISSION_GRANTED){
 
                     locationManager.requestLocationUpdates(provider,0,0,this);
-                    System.out.println("COARSE LOC");
+
                 }
             }
         }
@@ -565,13 +561,9 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
 
         try {
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            String city = addresses.get(0).getLocality();
-            String country = addresses.get(0).getCountryName();
+            city = addresses.get(0).getLocality();
+            country = addresses.get(0).getCountryName();
             location_text.setText(city + "," + country);
-
-
-            System.out.println(city);
-            System.out.println(country);
         } catch (IOException e) {
             e.printStackTrace();
         }

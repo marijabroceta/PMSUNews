@@ -28,6 +28,8 @@ import android.widget.Toast;
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
 import com.example.marija.pmsunews.adapters.ViewPagerAdapter;
 import com.example.marija.pmsunews.fragments.CommentsFragment;
+import com.example.marija.pmsunews.fragments.EditPostFragment;
+import com.example.marija.pmsunews.fragments.MapFragment;
 import com.example.marija.pmsunews.fragments.ReadPostFragment;
 import com.example.marija.pmsunews.model.NavItem;
 import com.example.marija.pmsunews.model.Post;
@@ -36,6 +38,7 @@ import com.example.marija.pmsunews.model.User;
 import com.example.marija.pmsunews.service.PostService;
 import com.example.marija.pmsunews.service.ServiceUtils;
 import com.example.marija.pmsunews.service.UserService;
+import com.example.marija.pmsunews.tools.FragmentTransition;
 import com.google.gson.Gson;
 
 import java.text.SimpleDateFormat;
@@ -57,11 +60,10 @@ public class ReadPostActivity extends AppCompatActivity {
     private ViewPager viewPager;
     private CharSequence mTitle;
     private ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
-    private Post post = new Post();
+    //private Post post = new Post();
     private User user = new User();
-    private Tag tag = new Tag();
-    private ArrayList<Tag> tags = new ArrayList<>();
 
+    private Integer postId;
 
     String userNamePref;
     private SharedPreferences sharedPreferences;
@@ -141,14 +143,6 @@ public class ReadPostActivity extends AppCompatActivity {
             textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
         }
 
-        String jsonMyObject = null;
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            jsonMyObject = extras.getString("Post");
-        }
-        post = new Gson().fromJson(jsonMyObject, Post.class);
-
-        System.out.println(post.getId());
         postService = ServiceUtils.postService;
         userService = ServiceUtils.userService;
 
@@ -167,6 +161,8 @@ public class ReadPostActivity extends AppCompatActivity {
 
             }
         });
+
+        postId = getIntent().getIntExtra("postId",0);
 
         invalidateOptionsMenu();
     }
@@ -200,9 +196,12 @@ public class ReadPostActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_itemdetail, menu);
-        if(!userNamePref.equals(post.getAuthor().getUsername())) {
-            MenuItem item = menu.findItem(R.id.action_delete);
-            item.setVisible(false);
+        String userName = getIntent().getStringExtra("user");
+        if(!userNamePref.equals(userName)) {
+            MenuItem item_delete = menu.findItem(R.id.action_delete);
+            MenuItem item_edit = menu.findItem(R.id.action_edit);
+            item_delete.setVisible(false);
+            item_edit.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -216,27 +215,22 @@ public class ReadPostActivity extends AppCompatActivity {
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 return true;
-            /*case R.id.action_edit:
-                Toast.makeText(this,"Edit post",Toast.LENGTH_SHORT).show();
-                return true;*/
+            case R.id.action_edit:
+                FragmentTransition.to(EditPostFragment.newInstance(),this,false);
+                return true;
             case R.id.action_delete:
-                if(userNamePref.equals(post.getAuthor().getUsername())){
-                    delete();
-                    Toast.makeText(getApplicationContext(),"Post is deleted!",Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(this,PostsActivity.class);
-                    startActivity(intent);
-                }else{
-                    Toast.makeText(getApplicationContext(),"You can't delete this",Toast.LENGTH_SHORT).show();
-                }
-
-
+                delete();
+                Toast.makeText(getApplicationContext(),"Post is deleted!",Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(this,PostsActivity.class);
+                startActivity(intent);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
     }
 
     public void delete(){
-        Call<Post> call = postService.deletePost(post.getId());
+        Call<Post> call = postService.deletePost(postId);
         call.enqueue(new Callback<Post>() {
             @Override
             public void onResponse(Call<Post> call, Response<Post> response) {

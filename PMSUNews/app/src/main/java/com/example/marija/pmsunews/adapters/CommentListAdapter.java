@@ -1,5 +1,6 @@
 package com.example.marija.pmsunews.adapters;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.database.DataSetObserver;
@@ -28,15 +29,10 @@ import retrofit2.Response;
 
 public class CommentListAdapter extends ArrayAdapter<Comment> {
 
+
     private CommentService commentService;
-    private Comment comment;
 
-    private ImageButton like_btn;
-    private ImageButton dislike_btn;
-    private TextView like_text;
-    private TextView dislike_text;
-
-    private boolean clickedLike;
+    private static boolean clickedLike;
     private boolean clickedDislike;
 
     private int counterLikes;
@@ -46,26 +42,30 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
     String userNamePref;
 
-    public CommentListAdapter(Context context, List<Comment> comments){super(context,0,comments);}
+    public CommentListAdapter(Context context, List<Comment> comments){
+        super(context,0,comments);
+    }
 
     @Override
-    public View getView(final int position, View view, ViewGroup viewGroup){
-        comment = getItem(position);
+    public View getView(int position, View view, ViewGroup viewGroup){
+        final Comment comment = getItem(position);
 
         if(view == null){
             view = LayoutInflater.from(getContext()).inflate(R.layout.comment_list_item,viewGroup,false);
         }
+
+
 
         TextView title_view = view.findViewById(R.id.title_comment_view);
         TextView author_view = view.findViewById(R.id.author_comment_view);
         TextView date_view = view.findViewById(R.id.date_comment_view);
         String formatedDate = new SimpleDateFormat("dd.MM.yyyy HH:mm").format(comment.getDate());
         TextView comment_view = view.findViewById(R.id.comment_view);
-        like_text = view.findViewById(R.id.like_comment_text);
-        dislike_text = view.findViewById(R.id.dislike_comment_text);
+        final TextView like_text = view.findViewById(R.id.like_comment_text);
+        final TextView dislike_text = view.findViewById(R.id.dislike_comment_text);
         ImageButton deleteBtn = view.findViewById(R.id.delete_btn);
-        like_btn = view.findViewById(R.id.like_comment_image);
-        dislike_btn = view.findViewById(R.id.dislike_comment_image);
+        final ImageButton like_btn = view.findViewById(R.id.like_comment_image);
+        final ImageButton dislike_btn = view.findViewById(R.id.dislike_comment_image);
 
 
         title_view.setText(comment.getTitle());
@@ -90,7 +90,6 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             public void onClick(View view) {
                 delete(comment.getId());
                 Toast.makeText(getContext(),"Comment is deleted",Toast.LENGTH_SHORT).show();
-
             }
         });
 
@@ -98,19 +97,27 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         like_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println(clickedLike);
                 if(userNamePref.equals(comment.getAuthor().getUsername())){
-                    Toast.makeText(getContext(),"You can't like your comment",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"You can't like your post",Toast.LENGTH_SHORT).show();
                 }else{
                     if(clickedLike == false){
-                        addLike();
+                        addLike(comment,comment.getId());
+                        like_btn.setImageResource(R.drawable.ic_like_green);
                         like_text.setText(String.valueOf(comment.getLikes()));
                         clickedLike = true;
                         dislike_btn.setEnabled(false);
-                    }else{
-                        removeLike();
+
+
+                    }
+                    else{
+
+                        removeLike(comment,comment.getId());
+                        like_btn.setImageResource(R.drawable.ic_action_like_white);
                         like_text.setText(String.valueOf(comment.getLikes()));
                         clickedLike = false;
                         dislike_btn.setEnabled(true);
+
                     }
                 }
             }
@@ -121,20 +128,22 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             @Override
             public void onClick(View view) {
                 if(userNamePref.equals(comment.getAuthor().getUsername())){
-                    Toast.makeText(getContext(),"You can't dislike your comment",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),"You can't dislike your post",Toast.LENGTH_SHORT).show();
                 }else{
                     if(clickedDislike == false){
-                        addDislike();
+                        addDislike(comment,comment.getId());
+                        dislike_btn.setImageResource(R.drawable.ic_dislike_red);
                         dislike_text.setText(String.valueOf(comment.getDislikes()));
                         clickedDislike = true;
                         like_btn.setEnabled(false);
                     }else{
-
-                        removeDislike();
+                        removeDislike(comment,comment.getId());
+                        dislike_btn.setImageResource(R.drawable.ic_action_dislike_white);
                         dislike_text.setText(String.valueOf(comment.getDislikes()));
                         clickedDislike = false;
-                        like_btn.setEnabled(false);
+                        like_btn.setEnabled(true);
                     }
+
                 }
             }
         });
@@ -155,27 +164,19 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
             }
         });
-
         this.notifyDataSetChanged();
     }
 
-    public void addLike(){
+    public void addLike(Comment comment,int id){
+
         counterLikes = comment.getLikes();
-        System.out.println("*************");
-        System.out.println(counterLikes);
         comment.setLikes(counterLikes+1);
-        System.out.println("---------------");
-        System.out.println(counterLikes);
 
-        System.out.println("============");
-        System.out.println(comment.getId());
-
-
-        Call<Comment> call = commentService.addLikeDislike(comment,comment.getId());
+        Call<Comment> call = commentService.addLikeDislike(comment,id);
         call.enqueue(new Callback<Comment>() {
             @Override
             public void onResponse(Call<Comment> call, Response<Comment> response) {
-                like_btn.setImageResource(R.drawable.ic_like_green);
+
             }
 
             @Override
@@ -183,18 +184,19 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
             }
         });
+
     }
 
 
-    public void addDislike(){
+    public void addDislike(Comment comment,int id){
         counterDislikes = comment.getDislikes();
         comment.setDislikes(counterDislikes+1);
 
-        Call<Comment> call = commentService.addLikeDislike(comment,comment.getId());
+        Call<Comment> call = commentService.addLikeDislike(comment,id);
         call.enqueue(new Callback<Comment>() {
             @Override
             public void onResponse(Call<Comment> call, Response<Comment> response) {
-                dislike_btn.setImageResource(R.drawable.ic_dislike_red);
+
             }
 
             @Override
@@ -202,17 +204,18 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
             }
         });
+
     }
 
-    public void removeLike(){
+    public void removeLike(Comment comment,int id){
         counterLikes = comment.getLikes();
         comment.setLikes(counterLikes-1);
 
-        Call<Comment> call = commentService.addLikeDislike(comment,comment.getId());
+        Call<Comment> call = commentService.addLikeDislike(comment,id);
         call.enqueue(new Callback<Comment>() {
             @Override
             public void onResponse(Call<Comment> call, Response<Comment> response) {
-                like_btn.setImageResource(R.drawable.ic_action_like_white);
+
             }
 
             @Override
@@ -220,17 +223,18 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
             }
         });
+
     }
 
-    public void removeDislike(){
+    public void removeDislike(Comment comment,int id){
         counterDislikes = comment.getDislikes();
         comment.setDislikes(counterDislikes-1);
 
-        Call<Comment> call = commentService.addLikeDislike(comment,comment.getId());
+        Call<Comment> call = commentService.addLikeDislike(comment,id);
         call.enqueue(new Callback<Comment>() {
             @Override
             public void onResponse(Call<Comment> call, Response<Comment> response) {
-                dislike_btn.setImageResource(R.drawable.ic_action_dislike_white);
+
             }
 
             @Override
@@ -238,5 +242,8 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
             }
         });
+
     }
+
+
 }

@@ -12,10 +12,20 @@
             android:summary="@string/pref_sort_by_date_summ"/>
 
         <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_sort_post_by_like_key"
+            android:title="@string/pref_sort_by_like_title"
+            android:summary="@string/pref_sort_by_like_summ"/>
 
-            android:key="@string/pref_sort_post_by_popularity_key"
-            android:title="@string/pref_sort_by_popularity_title"
-            android:summary="@string/pref_sort_by_popularity_summ"/>
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_sort_post_by_dislike_key"
+            android:title="@string/pref_sort_by_dislike_title"
+            android:summary="@string/pref_sort_by_dislike_summ"/>
+
+
+
+
 
     </PreferenceCategory>
     <PreferenceCategory
@@ -30,9 +40,15 @@
 
         <CheckBoxPreference
             android:defaultValue="false"
-            android:key="@string/pref_sort_comment_by_popularity_key"
-            android:title="@string/pref_sort_comments_by_popularity_title"
-            android:summary="@string/pref_sort_comments_by_popularity_summ"/>
+            android:key="@string/pref_sort_comment_by_like_key"
+            android:title="@string/pref_sort_comments_by_like_title"
+            android:summary="@string/pref_sort_comments_by_like_summ"/>
+
+        <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="@string/pref_sort_comment_by_dislike_key"
+            android:title="@string/pref_sort_comments_by_dislike_title"
+            android:summary="@string/pref_sort_comments_by_dislike_summ"/>
 
     </PreferenceCategory>
 

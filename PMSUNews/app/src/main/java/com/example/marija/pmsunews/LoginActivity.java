@@ -94,18 +94,23 @@ public class LoginActivity extends AppCompatActivity {
             public void onResponse(Call<User> call, Response<User> response) {
                 User user = response.body();
 
-                SharedPreferences.Editor editor = sharedPreferences.edit();
-                editor.putString(Name,user.getName());
-                editor.commit();
-
-                if(username.equals(user.getUsername()) && password.equals(user.getPassword())){
-
-                    Intent intent = new Intent(LoginActivity.this,PostsActivity.class);
-                    startActivity(intent);
-
-                }else{
+                if(user == null){
                     Toast.makeText(LoginActivity.this,"Username or password is incorrect",Toast.LENGTH_SHORT).show();
+                }else{
+                    if(username.equals(user.getUsername()) && password.equals(user.getPassword())){
+
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+                        editor.putString(Name,user.getName());
+                        editor.commit();
+                        Intent intent = new Intent(LoginActivity.this,PostsActivity.class);
+                        startActivity(intent);
+
+                    }else{
+                        Toast.makeText(LoginActivity.this,"Username or password is incorrect",Toast.LENGTH_SHORT).show();
+                    }
                 }
+
+
             }
 
             @Override

@@ -40,9 +40,13 @@
     <string name="pref_sort_by_date_title">Sort by date</string>
     <string name="pref_sort_by_date_summ">Sort posts by date</string>
 
-    <string name="pref_sort_post_by_popularity_key">pref_sort_post_by_popularity_key</string>
-    <string name="pref_sort_by_popularity_title">Sort by popularity</string>
-    <string name="pref_sort_by_popularity_summ">Sort posts by popularity</string>
+    <string name="pref_sort_post_by_like_key">pref_sort_post_by_like_key</string>
+    <string name="pref_sort_by_like_title">Sort by likes</string>
+    <string name="pref_sort_by_like_summ">Sort posts by likes</string>
+
+    <string name="pref_sort_post_by_dislike_key">pref_sort_post_by_dislike_key</string>
+    <string name="pref_sort_by_dislike_title">Sort by dislikes</string>
+    <string name="pref_sort_by_dislike_summ">Sort posts by dislikes</string>
 
 
     <string name="pref_sort_comments_key">pref_sort_comments_key</string>
@@ -52,9 +56,13 @@
     <string name="pref_sort_comments_by_date_title">Sort by date</string>
     <string name="pref_sort_comments_by_date_summ">Sort comments by date</string>
 
-    <string name="pref_sort_comment_by_popularity_key">pref_sort_comment_by_popularity_key</string>
-    <string name="pref_sort_comments_by_popularity_title">Sort by popularity</string>
-    <string name="pref_sort_comments_by_popularity_summ">Sort comments by popularity</string>
+    <string name="pref_sort_comment_by_like_key">pref_sort_comment_by_like_key</string>
+    <string name="pref_sort_comments_by_like_title">Sort by likes</string>
+    <string name="pref_sort_comments_by_like_summ">Sort comments by likes</string>
+
+    <string name="pref_sort_comment_by_dislike_key">pref_sort_comment_by_dislike_key</string>
+    <string name="pref_sort_comments_by_dislike_title">Sort by dislikes</string>
+    <string name="pref_sort_comments_by_dislike_summ">Sort comments by dislikes</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>

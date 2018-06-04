@@ -64,12 +64,7 @@ public class PostListAdapter extends ArrayAdapter<Post> {
 
         date_view.setText(newDate);
         title_view.setText(post.getTitle());
-
-         /*while(post.getPhoto() == null){
-             continue;
-         }
-            Bitmap bmp = BitmapFactory.decodeByteArray(post.getPhoto(), 0, post.getPhoto().length);*/
-            image_view.setImageBitmap(post.getPhoto());
+        image_view.setImageBitmap(post.getPhoto());
 
         System.out.println("LATITUDE POST" + post.getLatitude() + " " + "LONGITUDE POST" + post.getLongitude());
         getAddress(post.getLatitude(),post.getLongitude());

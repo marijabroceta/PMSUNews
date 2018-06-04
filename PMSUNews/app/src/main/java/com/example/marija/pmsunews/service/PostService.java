@@ -32,11 +32,20 @@ public interface PostService {
     @GET("posts/tag{1}")
     Call<List<Post>> getPostsByTag(@Path("id") int id);
 
+    @GET("posts/sort/bydate")
+    Call<List<Post>> sortByDate();
+
+    @GET("posts/sort/bylikes")
+    Call<List<Post>> sortByLikes();
+
+    @GET("posts/sort/bydislikes")
+    Call<List<Post>> sortByDislikes();
+
     @POST(ServiceUtils.POSTS)
     Call<Post> createPost(@Body Post post);
 
     @PUT("posts/{id}")
-    Call<Post> addLikeDislike(@Body Post post,@Path("id") int id);
+    Call<Post> editPost(@Body Post post,@Path("id") int id);
 
     @PUT("posts/setTags/{postId}/{tagId}")
     Call<Post> setTagsInPost(@Path("postId") int postId,@Path("tagId") int tagId);

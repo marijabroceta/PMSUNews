@@ -1,9 +1,8 @@
 package com.example.marija.pmsunews.adapters;
 
-import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
-import android.database.DataSetObserver;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,7 @@ import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marija.pmsunews.EditCommentActivity;
 import com.example.marija.pmsunews.LoginActivity;
 import com.example.marija.pmsunews.R;
 import com.example.marija.pmsunews.model.Comment;
@@ -29,11 +29,14 @@ import retrofit2.Response;
 
 public class CommentListAdapter extends ArrayAdapter<Comment> {
 
+    private Context context;
 
     private CommentService commentService;
 
+    private ImageButton edit_btn;
+
     private static boolean clickedLike;
-    private boolean clickedDislike;
+    private static boolean clickedDislike;
 
     private int counterLikes;
     private int counterDislikes;
@@ -44,6 +47,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
     public CommentListAdapter(Context context, List<Comment> comments){
         super(context,0,comments);
+        this.context = context;
     }
 
     @Override
@@ -66,6 +70,7 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
         ImageButton deleteBtn = view.findViewById(R.id.delete_btn);
         final ImageButton like_btn = view.findViewById(R.id.like_comment_image);
         final ImageButton dislike_btn = view.findViewById(R.id.dislike_comment_image);
+        edit_btn = view.findViewById(R.id.edit_btn);
 
 
         title_view.setText(comment.getTitle());
@@ -90,6 +95,15 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
             public void onClick(View view) {
                 delete(comment.getId());
                 Toast.makeText(getContext(),"Comment is deleted",Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        edit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(getContext(), EditCommentActivity.class);
+                intent.putExtra("commentId",comment.getId());
+                getContext().startActivity(intent);
             }
         });
 

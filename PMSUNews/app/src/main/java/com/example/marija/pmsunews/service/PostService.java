@@ -41,6 +41,12 @@ public interface PostService {
     @GET("posts/sort/bydislikes")
     Call<List<Post>> sortByDislikes();
 
+    @GET("posts/searchbyauthor/{username}")
+    Call<List<Post>> searchByAuthor(@Path("username") String username);
+
+    @GET("posts/tags/{name}")
+    Call<List<Post>> searchByTag(@Path("name") String name);
+
     @POST(ServiceUtils.POSTS)
     Call<Post> createPost(@Body Post post);
 

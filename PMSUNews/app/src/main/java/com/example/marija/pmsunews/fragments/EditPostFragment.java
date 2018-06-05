@@ -65,6 +65,7 @@ public class EditPostFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         view = inflater.inflate(R.layout.edit_post_fragment,container,false);
+
         return view;
     }
 

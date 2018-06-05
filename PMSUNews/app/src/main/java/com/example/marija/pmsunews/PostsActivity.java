@@ -3,14 +3,7 @@ package com.example.marija.pmsunews;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.location.Address;
-import android.location.Geocoder;
-import android.os.Handler;
-import android.preference.CheckBoxPreference;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.widget.DrawerLayout;
@@ -18,8 +11,6 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
-import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -27,6 +18,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
+import android.widget.SearchView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -74,7 +66,7 @@ public class PostsActivity extends AppCompatActivity {
 
     private PostService postService;
 
-    private Post post = new Post();
+    private Post post;
 
     public static ArrayList<Tag> tags = new ArrayList<>();
 
@@ -303,6 +295,23 @@ public class PostsActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_menu_post, menu);
+        MenuItem search_item = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) search_item.getActionView();
+
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String s) {
+                searchByAuthor(s);
+                searchByTag(s);
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String s) {
+                getPosts();
+                return true;
+            }
+        });
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -383,6 +392,55 @@ public class PostsActivity extends AppCompatActivity {
         super.onDestroy();
     }
 
+    public void searchByAuthor(String s){
+        Call<List<Post>> call = postService.searchByAuthor(s);
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                posts = response.body();
+                postListAdapter = new PostListAdapter(getApplicationContext(),posts);
+                listView.setAdapter(postListAdapter);
+            }
 
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void searchByTag(String s){
+        Call<List<Post>> call = postService.searchByTag(s);
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                posts = response.body();
+                postListAdapter = new PostListAdapter(getApplicationContext(),posts);
+                listView.setAdapter(postListAdapter);
+            }
+
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+
+            }
+        });
+    }
+
+    public void getPosts(){
+        Call call = postService.getPosts();
+        call.enqueue(new Callback<List<Post>>() {
+            @Override
+            public void onResponse(Call<List<Post>> call, Response<List<Post>> response) {
+                posts = response.body();
+                postListAdapter = new PostListAdapter(getApplicationContext(),posts);
+                listView.setAdapter(postListAdapter);
+                consultPreferences();
+            }
+            @Override
+            public void onFailure(Call<List<Post>> call, Throwable t) {
+                t.printStackTrace();
+            }
+        });
+    }
 
 }

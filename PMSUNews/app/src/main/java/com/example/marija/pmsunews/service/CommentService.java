@@ -26,6 +26,9 @@ public interface CommentService {
     @GET(ServiceUtils.COMMENTSBYPOST)
     Call<List<Comment>> getCommentsByPost(@Path("id") int id);
 
+    @GET("comments/{id}")
+    Call<Comment> getCommentById(@Path("id") int id);
+
     @GET("comments/post/sort/bydate/{id}")
     Call<List<Comment>> sortCommentsByDate(@Path("id") int id);
 
@@ -39,8 +42,8 @@ public interface CommentService {
     @POST("comments")
     Call<ResponseBody> addComment(@Body Comment comment);
 
-    @PUT("comments/id")
-    Call<Comment> editComment(@Body Comment comment);
+    @PUT("comments/{id}")
+    Call<Comment> editComment(@Body Comment comment,@Path("id") Integer id);
 
     @PUT("comments/{id}")
     Call<Comment> addLikeDislike(@Body Comment comment,@Path("id") int id);

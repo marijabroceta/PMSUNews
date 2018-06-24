@@ -9,6 +9,10 @@
     <string name="tags">Tags</string>
 
     <string name="login">Login</string>
+    <string name="register"><u>Register</u></string>
+
+    <string name="skip"><u>Skip</u></string>
+
     <string name="upload_image_btn">Upload image</string>
     <string name="create_btn">Create</string>
     <string name="create_post_btn">Create post</string>
@@ -28,6 +32,8 @@
     <string name="logout_long">Logout from the app</string>
     <string name="map">Map</string>
     <string name="map_long">Open map</string>
+    <string name="users">Users</string>
+    <string name="users_long">List of all users</string>
 
     <string name="pref_pick_date_key">pref_pick_date_key</string>
     <string name="pref_pick_date_title">Pick date</string>

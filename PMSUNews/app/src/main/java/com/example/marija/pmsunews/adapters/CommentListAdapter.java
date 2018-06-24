@@ -43,7 +43,8 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
     private SharedPreferences sharedPreferences;
 
-    String userNamePref;
+    private String userNamePref;
+    private String rolePref;
 
     public CommentListAdapter(Context context, List<Comment> comments){
         super(context,0,comments);
@@ -83,10 +84,18 @@ public class CommentListAdapter extends ArrayAdapter<Comment> {
 
         sharedPreferences  = getContext().getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
         userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+        rolePref = sharedPreferences.getString(LoginActivity.Role,"");
 
-        if(!userNamePref.equals(comment.getAuthor().getUsername())){
-            deleteBtn.setVisibility(View.INVISIBLE);
+        if(!rolePref.equals("ADMIN")){
+            if(!userNamePref.equals(comment.getAuthor().getUsername()) || userNamePref.equals("")){
+                deleteBtn.setVisibility(View.INVISIBLE);
+                edit_btn.setVisibility(View.INVISIBLE);
+            }
+        }else{
+            deleteBtn.setVisibility(View.VISIBLE);
+            edit_btn.setVisibility(View.VISIBLE);
         }
+
 
         commentService = ServiceUtils.commentService;
 

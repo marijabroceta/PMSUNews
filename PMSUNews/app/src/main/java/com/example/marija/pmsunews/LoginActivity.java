@@ -3,16 +3,16 @@ package com.example.marija.pmsunews;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.marija.pmsunews.model.Post;
 import com.example.marija.pmsunews.model.User;
 import com.example.marija.pmsunews.service.ServiceUtils;
 import com.example.marija.pmsunews.service.UserService;
@@ -27,13 +27,19 @@ public class LoginActivity extends AppCompatActivity {
     public static final String MyPreferances = "MyPrefs";
     public static final String Username = "usernameKey";
     public static final String Name = "nameKey";
-    public static final String Longitude = "longitudeKey";
-    public static final String Latitude = "latitudeKey";
+    public static final String Role = "roleKey";
+
     private UserService userService;
+
     private EditText editUsername;
     private EditText editPassword;
     private Button btnLogin;
+    private TextView registerText;
+    private TextView skipText;
+
     private SharedPreferences sharedPreferences;
+    private static User user;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,9 +47,12 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
 
         userService = ServiceUtils.userService;
+
         editUsername = findViewById(R.id.username_edit);
         editPassword = findViewById(R.id.password_edit);
         btnLogin = findViewById(R.id.login_btn);
+        registerText = findViewById(R.id.register);
+        skipText = findViewById(R.id.skip);
 
         sharedPreferences = getSharedPreferences(MyPreferances,Context.MODE_PRIVATE);
 
@@ -65,13 +74,29 @@ public class LoginActivity extends AppCompatActivity {
                         editor.putString(Username,username);
                         editor.commit();
                         doLogin(username,password);
+
                     }
                 }
             });
-            }else{
-                Intent intent = new Intent(this,PostsActivity.class);
-                startActivity(intent);
-            }
+
+            registerText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(getApplicationContext(),RegisterActivity.class);
+                    startActivity(i);
+                }
+            });
+            skipText.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent intent = new Intent(getApplicationContext(), PostsActivity.class);
+                    startActivity(intent);
+                }
+            });
+        }else{
+            Intent intent = new Intent(this,PostsActivity.class);
+            startActivity(intent);
+        }
 
     }
 
@@ -88,6 +113,7 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void doLogin(final String username, final String password){
+
         Call<User> call = userService.login(username,password);
         call.enqueue(new Callback<User>() {
             @Override
@@ -101,6 +127,7 @@ public class LoginActivity extends AppCompatActivity {
 
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.putString(Name,user.getName());
+                        editor.putString(Role,user.getRole().toString());
                         editor.commit();
                         Intent intent = new Intent(LoginActivity.this,PostsActivity.class);
                         startActivity(intent);

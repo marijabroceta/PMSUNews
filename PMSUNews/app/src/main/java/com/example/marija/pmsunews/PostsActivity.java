@@ -67,8 +67,9 @@ public class PostsActivity extends AppCompatActivity {
     private PostService postService;
 
     private Post post;
-
     public static ArrayList<Tag> tags = new ArrayList<>();
+
+    private String rolePref;
 
     private boolean sortPostByDate;
     private boolean sortPostByLikes;
@@ -142,6 +143,7 @@ public class PostsActivity extends AppCompatActivity {
             textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
         }
 
+
         listView = findViewById(R.id.post_list);
         postService = ServiceUtils.postService;
 
@@ -175,6 +177,7 @@ public class PostsActivity extends AppCompatActivity {
                         Intent intent = new Intent(PostsActivity.this,ReadPostActivity.class);
                         intent.putExtra("postId",post.getId());
                         intent.putExtra("user",post.getAuthor().getUsername());
+                        intent.putExtra("userRole",post.getAuthor().getRole());
 
                         startActivity(intent);
                     }
@@ -189,6 +192,11 @@ public class PostsActivity extends AppCompatActivity {
         });
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        rolePref = sharedPreferences.getString(LoginActivity.Role,"");
+        if(rolePref.equals("USER")){
+            fab.setVisibility(View.INVISIBLE);
+        }
     }
 
     @Override
@@ -287,6 +295,7 @@ public class PostsActivity extends AppCompatActivity {
         mNavItems.add(new NavItem(getString(R.string.home),getString(R.string.all_post),R.drawable.ic_action_home));
         mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
         mNavItems.add(new NavItem(getString(R.string.map),getString(R.string.map_long),R.drawable.ic_map));
+        mNavItems.add(new NavItem(getString(R.string.users),getString(R.string.users_long),R.drawable.ic_list_users));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
         mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
     }
@@ -327,6 +336,14 @@ public class PostsActivity extends AppCompatActivity {
             case R.id.action_search:
                 Toast.makeText(this,"Search",Toast.LENGTH_SHORT).show();
                 return true;
+            case R.id.action_login:
+                Intent intent = new Intent(this,LoginActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_register:
+                Intent intent1 = new Intent(this,RegisterActivity.class);
+                startActivity(intent1);
+                return true;
         }
 
         return super.onOptionsItemSelected(item);
@@ -348,12 +365,15 @@ public class PostsActivity extends AppCompatActivity {
         }else if(position == 1){
             Intent createIntent = new Intent(this, CreatePostActivity.class);
             startActivity(createIntent);
-        }else if(position == 2){
-            FragmentTransition.to(MapFragment.newInstance(),this,false);
+        }else if(position == 2) {
+            FragmentTransition.to(MapFragment.newInstance(), this, false);
         }else if(position == 3){
+            Intent userIntent = new Intent(this,UsersActivity.class);
+            startActivity(userIntent);
+        }else if(position == 4){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
-        }else if(position == 4) {
+        }else if(position == 5) {
             SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 

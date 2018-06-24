@@ -4,7 +4,7 @@
 
     <item
         android:id="@+id/action_settings"
-        android:orderInCategory="300"
+        android:orderInCategory="400"
         android:title="Settings"
         app:showAsAction="never"/>
 
@@ -15,4 +15,17 @@
         android:orderInCategory="100"
         app:showAsAction="ifRoom"
         app:actionViewClass="android.widget.SearchView" />
+    <item
+        android:id="@+id/action_register"
+        android:orderInCategory="300"
+        android:title="Register"
+        android:icon="@drawable/ic_register"
+        app:showAsAction="never"/>
+
+    <item
+        android:id="@+id/action_login"
+        android:orderInCategory="200"
+        android:title="Login"
+
+        app:showAsAction="never"/>
 </menu>

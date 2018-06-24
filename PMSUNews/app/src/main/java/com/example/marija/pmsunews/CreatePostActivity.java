@@ -392,8 +392,13 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 return true;
-            case R.id.action_create_done:
-                Toast.makeText(this,"Created",Toast.LENGTH_SHORT).show();
+            case R.id.action_login:
+                Intent intent = new Intent(this,LoginActivity.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_register:
+                Intent intent1 = new Intent(this,RegisterActivity.class);
+                startActivity(intent1);
                 return true;
 
         }

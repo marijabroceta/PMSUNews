@@ -114,19 +114,22 @@ public class CommentsFragment extends Fragment {
         sharedPreferences = getActivity().getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
         String userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
 
-       Call<User> call_user = userService.getUserByUsername(userNamePref);
+        if(!userNamePref.equals("")){
+            Call<User> call_user = userService.getUserByUsername(userNamePref);
 
-        call_user.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
-                user = response.body();
-            }
+            call_user.enqueue(new Callback<User>() {
+                @Override
+                public void onResponse(Call<User> call, Response<User> response) {
+                    user = response.body();
+                }
 
-            @Override
-            public void onFailure(Call<User> call, Throwable t) {
+                @Override
+                public void onFailure(Call<User> call, Throwable t) {
 
-            }
-        });
+                }
+            });
+
+        }
 
         title_comment_edit = view.findViewById(R.id.title_comment_edit);
         comment_edit = view.findViewById(R.id.comment_edit);

@@ -2,6 +2,9 @@ package com.example.marija.pmsunews.model;
 
 import android.graphics.Bitmap;
 
+import com.google.gson.annotations.Expose;
+import com.google.gson.annotations.SerializedName;
+
 import java.util.List;
 
 /**
@@ -9,11 +12,31 @@ import java.util.List;
  */
 
 public class User {
+
+    public enum Role{
+        ADMIN,
+        USER,
+        PUBLISHER
+    }
+
+    @SerializedName("id")
+    @Expose
     private int id;
+    @SerializedName("name")
+    @Expose
     private String name;
+    @SerializedName("photo_user")
+    @Expose
     private Bitmap photo;
+    @SerializedName("username")
+    @Expose
     private String username;
+    @SerializedName("password")
+    @Expose
     private String password;
+    @SerializedName("role")
+    @Expose
+    private Role role;
     private List<Post> posts;
     private List<Comment> comments;
 
@@ -55,6 +78,14 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public List<Post> getPosts() {

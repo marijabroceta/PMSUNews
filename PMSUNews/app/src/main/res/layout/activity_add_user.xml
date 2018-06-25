@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SingleUserActivity">
+    tools:context=".AddUser">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
@@ -18,7 +19,7 @@
             android:background="@color/colorPrimary" />
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/post_toolbar"
+            android:id="@+id/create_post_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -29,49 +30,75 @@
 
     </android.support.design.widget.AppBarLayout>
 
+
     <android.support.v4.widget.DrawerLayout
         android:id="@+id/drawer_layout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical">
 
+        <android.support.design.widget.CoordinatorLayout
+            android:id="@+id/coordinator"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_gravity="bottom|right"
+                android:layout_marginBottom="16dp"
+                android:layout_marginRight="16dp"
+                android:src="@drawable/ic_done_white"
+                android:backgroundTint="@color/colorPrimary"/>
 
             <RelativeLayout
                 android:id="@+id/main_content"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent">
 
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:hint="Name..."/>
+
+                <EditText
+                    android:id="@+id/username"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@id/name"
+                    android:hint="Username..."/>
+
+                <EditText
+                    android:id="@+id/password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@id/username"
+                    android:hint="Password..."/>
+
+                <Button
+                    android:id="@+id/upload_btn_user"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:layout_below="@id/password"
+                    android:text="@string/upload_image_btn"/>
+
                 <ImageView
-                    android:id="@+id/single_user_image"
-                    android:layout_width="200dp"
-                    android:layout_height="200dp"
-                    android:layout_margin="20dp"/>
-
-                <TextView
-                    android:id="@+id/single_user_name"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_below="@id/single_user_image"
-                    android:layout_margin="20dp"/>
-
-                <TextView
-                    android:id="@+id/single_user_username"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:layout_below="@id/single_user_name" />
-
-                <TextView
-                    android:id="@+id/single_user_role"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="20dp"
-                    android:layout_below="@id/single_user_username"/>
-
-
-
+                    android:id="@+id/uploaded_photo_user"
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:layout_marginTop="15dp"
+                    android:layout_marginRight="80dp"
+                    android:layout_marginLeft="10dp"
+                    android:layout_below="@id/upload_btn_user"/>
             </RelativeLayout>
-
+        </android.support.design.widget.CoordinatorLayout>
 
         <RelativeLayout
             android:id="@+id/drawer_pane"
@@ -132,6 +159,4 @@
 
     </android.support.v4.widget.DrawerLayout>
 
-
-
-</RelativeLayout>
+</LinearLayout>

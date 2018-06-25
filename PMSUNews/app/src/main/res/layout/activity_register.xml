@@ -81,22 +81,7 @@
                     android:layout_below="@id/username"
                     android:hint="Password..."/>
 
-                <Button
-                    android:id="@+id/upload_btn_user"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:layout_below="@id/password"
-                    android:text="@string/upload_image_btn"/>
 
-                <ImageView
-                    android:id="@+id/uploaded_photo_user"
-                    android:layout_width="match_parent"
-                    android:layout_height="160dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginRight="80dp"
-                    android:layout_marginLeft="10dp"
-                    android:layout_below="@id/upload_btn_user"/>
             </RelativeLayout>
         </android.support.design.widget.CoordinatorLayout>
 
@@ -143,7 +128,7 @@
                         android:layout_height="wrap_content"
                         android:textColor="@color/white"
                         android:textSize="14sp"
-                        android:text="View profile"/>
+                        />
 
                 </LinearLayout>
             </RelativeLayout>

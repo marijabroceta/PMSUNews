@@ -48,8 +48,12 @@ public class UsersActivity extends AppCompatActivity {
 
     private UserListAdapter userListAdapter;
     private ListView listView;
+    private TextView viewProfile;
 
     private UserService userService;
+
+    private String userNamePref;
+    private String rolePref;
 
     private SharedPreferences sharedPreferences;
 
@@ -59,6 +63,9 @@ public class UsersActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_users);
 
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+        userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+        rolePref = sharedPreferences.getString(LoginActivity.Role,"");
         prepareMenu(mNavItems);
 
         mTitle = getTitle();
@@ -107,15 +114,40 @@ public class UsersActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(UsersActivity.this,RegisterActivity.class);
+                Intent intent = new Intent(UsersActivity.this,AddUser.class);
                 startActivity(intent);
             }
         });
 
         TextView textViewUser = findViewById(R.id.user);
-        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+        viewProfile = findViewById(R.id.view_profile);
+
+
         if(sharedPreferences.contains(LoginActivity.Username)){
-            textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
+            textViewUser.setText(userNamePref);
+            viewProfile.setText("View profile");
+            viewProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Call<User> call = userService.getUserByUsername(userNamePref);
+                    call.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            user = response.body();
+                            Intent intent = new Intent(UsersActivity.this,SingleUserActivity.class);
+                            intent.putExtra("userId",user.getId());
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+
+                        }
+                    });
+                }
+            });
+        }else{
+            textViewUser.setText("Not logged in");
         }
 
         listView = findViewById(R.id.user_list);
@@ -160,19 +192,31 @@ public class UsersActivity extends AppCompatActivity {
             }
         });
 
+
+
     }
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
         mNavItems.add(new NavItem(getString(R.string.home),getString(R.string.all_post),R.drawable.ic_action_home));
-        mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
+        if(userNamePref.equals("") || rolePref.equals("USER")){
+            mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
+        }
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
-        mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        if(!userNamePref.equals("")){
+            mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_menu_create_post, menu);
+        if(!userNamePref.equals("")){
+            MenuItem login_item = menu.findItem(R.id.action_login);
+            MenuItem register_tem = menu.findItem(R.id.action_register);
+            login_item.setVisible(false);
+            register_tem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 

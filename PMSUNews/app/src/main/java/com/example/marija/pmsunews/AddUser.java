@@ -1,12 +1,14 @@
 package com.example.marija.pmsunews;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.media.Image;
-import android.support.design.widget.AppBarLayout;
-import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.provider.MediaStore;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -17,28 +19,29 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.marija.pmsunews.adapters.DrawerListAdapter;
-import com.example.marija.pmsunews.fragments.EditPostFragment;
-import com.example.marija.pmsunews.fragments.EditUserFragment;
+import com.example.marija.pmsunews.fragments.MapFragment;
 import com.example.marija.pmsunews.model.NavItem;
 import com.example.marija.pmsunews.model.User;
 import com.example.marija.pmsunews.service.ServiceUtils;
 import com.example.marija.pmsunews.service.UserService;
 import com.example.marija.pmsunews.tools.FragmentTransition;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class SingleUserActivity extends AppCompatActivity {
+public class AddUser extends AppCompatActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
@@ -47,27 +50,28 @@ public class SingleUserActivity extends AppCompatActivity {
     private CharSequence mTitle;
     private ArrayList<NavItem> mNavItems = new ArrayList<NavItem>();
 
-    private UserService userService;
-
-    private int userId;
-    private User user;
-    private String userNamePref;
-
-    private ImageView user_image;
-    private TextView name;
-    private TextView username;
-    private TextView role;
+    private EditText name_edit;
+    private EditText username_edit;
+    private EditText pass_edit;
+    private Button upload_btn;
+    private ImageView image;
+    private FloatingActionButton fab;
     private TextView viewProfile;
 
+    private String userNamePref;
+    private User user;
+
+    private Bitmap bitmap;
+    private UserService userService;
 
     private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_single_user);
+        setContentView(R.layout.activity_add_user);
 
-        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
         userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
         prepareMenu(mNavItems);
 
@@ -81,8 +85,7 @@ public class SingleUserActivity extends AppCompatActivity {
         mDrawerList.setOnItemClickListener(new DrawerItemClickListener());
         mDrawerList.setAdapter(adapter);
 
-
-        Toolbar toolbar = findViewById(R.id.post_toolbar);
+        Toolbar toolbar = findViewById(R.id.create_post_toolbar);
         setSupportActionBar(toolbar);
         final android.support.v7.app.ActionBar actionBar = getSupportActionBar();
 
@@ -113,7 +116,24 @@ public class SingleUserActivity extends AppCompatActivity {
         mDrawerLayout.addDrawerListener(mDrawerToggle);
         mDrawerToggle.syncState();
 
+        name_edit = findViewById(R.id.name);
+        username_edit = findViewById(R.id.username);
+        pass_edit = findViewById(R.id.password);
+        upload_btn = findViewById(R.id.upload_btn_user);
+        image = findViewById(R.id.uploaded_photo_user);
+        fab = findViewById(R.id.fab);
         viewProfile = findViewById(R.id.view_profile);
+
+
+        upload_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+                intent.setType("image/*");
+                startActivityForResult(Intent.createChooser(intent, "Complete action using"), 1);
+            }
+        });
+
         TextView textViewUser = findViewById(R.id.user);
 
         if(sharedPreferences.contains(LoginActivity.Username)){
@@ -127,7 +147,7 @@ public class SingleUserActivity extends AppCompatActivity {
                         @Override
                         public void onResponse(Call<User> call, Response<User> response) {
                             user = response.body();
-                            Intent intent = new Intent(SingleUserActivity.this,SingleUserActivity.class);
+                            Intent intent = new Intent(AddUser.this,SingleUserActivity.class);
                             intent.putExtra("userId",user.getId());
                             startActivity(intent);
                         }
@@ -143,25 +163,34 @@ public class SingleUserActivity extends AppCompatActivity {
             textViewUser.setText("Not logged in");
         }
 
-        user_image = findViewById(R.id.single_user_image);
-        name = findViewById(R.id.single_user_name);
-        username = findViewById(R.id.single_user_username);
-        role = findViewById(R.id.single_user_role);
-
         userService = ServiceUtils.userService;
-        userId = getIntent().getIntExtra("userId",0);
+    }
 
-        Call<User> call = userService.getUser(userId);
+    private void prepareMenu(ArrayList<NavItem> mNavItems ){
+        mNavItems.add(new NavItem(getString(R.string.home),getString(R.string.all_post),R.drawable.ic_action_home));
+        mNavItems.add(new NavItem(getString(R.string.map),getString(R.string.map_long),R.drawable.ic_map));
+        mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
+        if(!userNamePref.equals("")){
+            mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        }
+    }
+
+    private void addUser(){
+        User user = new User();
+
+        String name = name_edit.getText().toString();
+        String username = username_edit.getText().toString();
+        String password = pass_edit.getText().toString();
+        user.setName(name);
+        user.setUsername(username);
+        user.setPassword(password);
+        user.setPhoto(bitmap);
+
+        Call<User> call = userService.addUser(user);
         call.enqueue(new Callback<User>() {
             @Override
             public void onResponse(Call<User> call, Response<User> response) {
-                user = response.body();
-                if(user != null){
-                    name.setText(user.getName());
-                    username.setText(user.getUsername());
-                    role.setText(user.getRole().toString());
-                    user_image.setImageBitmap(user.getPhoto());
-                }
+                Snackbar.make(findViewById(R.id.coordinator),"Registered!",Snackbar.LENGTH_SHORT).show();
             }
 
             @Override
@@ -172,20 +201,10 @@ public class SingleUserActivity extends AppCompatActivity {
 
     }
 
-    private void prepareMenu(ArrayList<NavItem> mNavItems ){
-        mNavItems.add(new NavItem(getString(R.string.home),getString(R.string.all_post),R.drawable.ic_action_home));
-
-        mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
-        mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
-        if(!userNamePref.equals("")){
-            mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
-        }
-    }
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.activity_menu_user, menu);
+        inflater.inflate(R.menu.activity_menu_create_post, menu);
         if(!userNamePref.equals("")){
             MenuItem login_item = menu.findItem(R.id.action_login);
             MenuItem register_tem = menu.findItem(R.id.action_register);
@@ -195,7 +214,6 @@ public class SingleUserActivity extends AppCompatActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -203,6 +221,7 @@ public class SingleUserActivity extends AppCompatActivity {
                 Intent i = new Intent(this, SettingsActivity.class);
                 startActivity(i);
                 return true;
+
             case R.id.action_login:
                 Intent intent = new Intent(this,LoginActivity.class);
                 startActivity(intent);
@@ -211,15 +230,7 @@ public class SingleUserActivity extends AppCompatActivity {
                 Intent intent1 = new Intent(this,RegisterActivity.class);
                 startActivity(intent1);
                 return true;
-            case R.id.action_edit:
-                FragmentTransition.to(EditUserFragment.newInstance(),this,false);
-                return true;
-            case R.id.action_delete:
-                delete();
-                Toast.makeText(getApplicationContext(),"User deleted!",Toast.LENGTH_SHORT).show();
-                Intent intent2 = new Intent(this,UsersActivity.class);
-                startActivity(intent2);
-                return true;
+
         }
 
         return super.onOptionsItemSelected(item);
@@ -234,15 +245,14 @@ public class SingleUserActivity extends AppCompatActivity {
 
     private void selectItemFromDrawer(int position){
         if(position == 0) {
-            Intent postIntent = new Intent(this,PostsActivity.class);
-            startActivity(postIntent);
+            Intent homeIntent = new Intent(this, PostsActivity.class);
+            startActivity(homeIntent);
         }else if(position == 1){
-            Intent createIntent = new Intent(this, CreatePostActivity.class);
-            startActivity(createIntent);
+            FragmentTransition.to(MapFragment.newInstance(),this,false);
         }else if(position == 2){
             Intent preferanceIntent = new Intent(this,SettingsActivity.class);
             startActivity(preferanceIntent);
-        }else if(position == 3) {
+        }else if(position == 3){
             SharedPreferences sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
 
@@ -257,25 +267,46 @@ public class SingleUserActivity extends AppCompatActivity {
         mDrawerLayout.closeDrawer(mDrawerPane);
     }
 
-
-
     @Override
     public void setTitle(CharSequence title) {
         mTitle = title;
         getSupportActionBar().setTitle(mTitle);
     }
 
-    public void delete(){
-        Call<User> call = userService.deleteUser(userId);
-        call.enqueue(new Callback<User>() {
-            @Override
-            public void onResponse(Call<User> call, Response<User> response) {
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
+
+        //Detects request codes
+        if(requestCode== 1 && resultCode == Activity.RESULT_OK) {
+            Uri selectedImage = data.getData();
+            bitmap = null;
+            try {
+                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
+
+                ImageView uploaded_photo = findViewById(R.id.uploaded_photo_user);
+                uploaded_photo.setImageBitmap(bitmap);
+
+            } catch (IOException e) {
+
+                e.printStackTrace();
             }
+        }
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        fab.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFailure(Call<User> call, Throwable t) {
+            public void onClick(View view) {
+                addUser();
 
+                name_edit.setText("");
+                username_edit.setText("");
+                pass_edit.setText("");
             }
         });
     }

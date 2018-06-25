@@ -55,11 +55,10 @@ public class RegisterActivity extends AppCompatActivity {
     private EditText name_edit;
     private EditText username_edit;
     private EditText pass_edit;
-    private Button upload_btn;
-    private ImageView image;
+
     private FloatingActionButton fab;
 
-    private Bitmap bitmap;
+    private String userNamePref;
     private UserService userService;
 
     private SharedPreferences sharedPreferences;
@@ -115,24 +114,18 @@ public class RegisterActivity extends AppCompatActivity {
         name_edit = findViewById(R.id.name);
         username_edit = findViewById(R.id.username);
         pass_edit = findViewById(R.id.password);
-        upload_btn = findViewById(R.id.upload_btn_user);
-        image = findViewById(R.id.uploaded_photo_user);
         fab = findViewById(R.id.fab);
 
 
-        upload_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(Intent.createChooser(intent, "Complete action using"), 1);
-            }
-        });
+
 
         TextView textViewUser = findViewById(R.id.user);
         sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
+        userNamePref = sharedPreferences.getString(LoginActivity.Name,"");
         if(sharedPreferences.contains(LoginActivity.Username)){
-            textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
+            textViewUser.setText(userNamePref);
+        }else{
+            textViewUser.setText("Not logged in");
         }
 
         userService = ServiceUtils.userService;
@@ -153,7 +146,7 @@ public class RegisterActivity extends AppCompatActivity {
         user.setName(name);
         user.setUsername(username);
         user.setPassword(password);
-        user.setPhoto(bitmap);
+
 
         Call<User> call = userService.addUser(user);
         call.enqueue(new Callback<User>() {
@@ -174,6 +167,12 @@ public class RegisterActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_menu_create_post, menu);
+        if(!userNamePref.equals("")){
+            MenuItem login_item = menu.findItem(R.id.action_login);
+            MenuItem register_tem = menu.findItem(R.id.action_register);
+            login_item.setVisible(false);
+            register_tem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -228,27 +227,7 @@ public class RegisterActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(mTitle);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
 
-
-        //Detects request codes
-        if(requestCode== 1 && resultCode == Activity.RESULT_OK) {
-            Uri selectedImage = data.getData();
-            bitmap = null;
-            try {
-                bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), selectedImage);
-
-                ImageView uploaded_photo = findViewById(R.id.uploaded_photo_user);
-                uploaded_photo.setImageBitmap(bitmap);
-
-            } catch (IOException e) {
-
-                e.printStackTrace();
-            }
-        }
-    }
 
     @Override
     protected void onResume() {

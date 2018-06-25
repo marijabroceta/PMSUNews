@@ -94,6 +94,7 @@ public class ReadPostFragment extends Fragment {
 
     private SharedPreferences sharedPreferences;
     private String userNamePref;
+    private String rolePref;
 
     public ReadPostFragment(){
 
@@ -177,6 +178,12 @@ public class ReadPostFragment extends Fragment {
 
         sharedPreferences = getActivity().getSharedPreferences(LoginActivity.MyPreferances, Context.MODE_PRIVATE);
         userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+        rolePref = sharedPreferences.getString(LoginActivity.Role,"");
+
+        if(rolePref.equals("USER")){
+            like_view.setEnabled(false);
+            dislike_view.setEnabled(false);
+        }
 
         clickedLike = false;
         like_view.setOnClickListener(new View.OnClickListener() {

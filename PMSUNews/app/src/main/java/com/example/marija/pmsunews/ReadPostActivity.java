@@ -65,7 +65,9 @@ public class ReadPostActivity extends AppCompatActivity {
 
     private Integer postId;
 
-    String userNamePref;
+    private TextView viewProfile;
+    private String userNamePref;
+    private String rolePref;
     private SharedPreferences sharedPreferences;
 
     private PostService postService;
@@ -76,6 +78,9 @@ public class ReadPostActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_read_post);
 
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+        userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+        rolePref = sharedPreferences.getString(LoginActivity.Role,"");
 
         prepareMenu(mNavItems);
 
@@ -137,16 +142,41 @@ public class ReadPostActivity extends AppCompatActivity {
         mDrawerToggle.syncState();
 
 
+        viewProfile = findViewById(R.id.view_profile);
+
         TextView textViewUser = findViewById(R.id.user);
-        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+
         if(sharedPreferences.contains(LoginActivity.Username)){
-            textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
+            textViewUser.setText(userNamePref);
+            viewProfile.setText("View profile");
+            viewProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Call<User> call = userService.getUserByUsername(userNamePref);
+                    call.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            user = response.body();
+                            Intent intent = new Intent(ReadPostActivity.this,SingleUserActivity.class);
+                            intent.putExtra("userId",user.getId());
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+
+                        }
+                    });
+                }
+            });
+        }else{
+            textViewUser.setText("Not logged in");
         }
 
         postService = ServiceUtils.postService;
         userService = ServiceUtils.userService;
 
-        userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+
 
         if(!userNamePref.equals("")){
             Call<User> call = userService.getUserByUsername(userNamePref);
@@ -190,9 +220,14 @@ public class ReadPostActivity extends AppCompatActivity {
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
         mNavItems.add(new NavItem(getString(R.string.home), getString(R.string.all_post), R.drawable.ic_action_home));
-        mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
+        if(!userNamePref.equals("") || !rolePref.equals("USER")){
+            mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
+        }
+
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
-        mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        if(!userNamePref.equals("")){
+            mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        }
 
     }
 
@@ -206,6 +241,18 @@ public class ReadPostActivity extends AppCompatActivity {
             MenuItem item_edit = menu.findItem(R.id.action_edit);
             item_delete.setVisible(false);
             item_edit.setVisible(false);
+        }
+        if(!userNamePref.equals("")){
+            MenuItem login_item = menu.findItem(R.id.action_login);
+            MenuItem register_tem = menu.findItem(R.id.action_register);
+            login_item.setVisible(false);
+            register_tem.setVisible(false);
+        }
+        if(rolePref.equals("ADMIN")){
+            MenuItem item_delete = menu.findItem(R.id.action_delete);
+            MenuItem item_edit = menu.findItem(R.id.action_edit);
+            item_delete.setVisible(true);
+            item_edit.setVisible(true);
         }
         return super.onCreateOptionsMenu(menu);
     }

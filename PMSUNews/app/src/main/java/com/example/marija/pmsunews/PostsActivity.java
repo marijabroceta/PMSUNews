@@ -32,6 +32,7 @@ import com.example.marija.pmsunews.model.Tag;
 import com.example.marija.pmsunews.model.User;
 import com.example.marija.pmsunews.service.PostService;
 import com.example.marija.pmsunews.service.ServiceUtils;
+import com.example.marija.pmsunews.service.UserService;
 import com.example.marija.pmsunews.tools.FragmentTransition;
 import com.google.gson.Gson;
 
@@ -65,16 +66,20 @@ public class PostsActivity extends AppCompatActivity {
     private ListView listView;
 
     private PostService postService;
+    private UserService userService;
 
     private Post post;
+    private User user;
     public static ArrayList<Tag> tags = new ArrayList<>();
 
     private String rolePref;
+    private String usernamePref;
 
     private boolean sortPostByDate;
     private boolean sortPostByLikes;
     private boolean sortPostByDislikes;
 
+    private TextView viewProfile;
 
     private SharedPreferences sharedPreferences;
 
@@ -84,6 +89,9 @@ public class PostsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_posts);
 
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+        rolePref = sharedPreferences.getString(LoginActivity.Role,"");
+        usernamePref = sharedPreferences.getString(LoginActivity.Username,"");
         prepareMenu(mNavItems);
 
         mTitle = getTitle();
@@ -137,10 +145,36 @@ public class PostsActivity extends AppCompatActivity {
             }
         });
 
+        userService = ServiceUtils.userService;
+
         TextView textViewUser = findViewById(R.id.user);
-        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+        viewProfile = findViewById(R.id.view_profile);
         if(sharedPreferences.contains(LoginActivity.Username)){
-            textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
+
+            textViewUser.setText(usernamePref);
+            viewProfile.setText("View profile");
+            viewProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Call<User> call = userService.getUserByUsername(usernamePref);
+                    call.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            user = response.body();
+                            Intent intent = new Intent(PostsActivity.this,SingleUserActivity.class);
+                            intent.putExtra("userId",user.getId());
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+
+                        }
+                    });
+                }
+            });
+        }else{
+            textViewUser.setText("Not logged in");
         }
 
 
@@ -193,8 +227,8 @@ public class PostsActivity extends AppCompatActivity {
 
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
 
-        rolePref = sharedPreferences.getString(LoginActivity.Role,"");
-        if(rolePref.equals("USER")){
+
+        if(rolePref.equals("USER") || usernamePref.equals("")){
             fab.setVisibility(View.INVISIBLE);
         }
     }
@@ -292,18 +326,36 @@ public class PostsActivity extends AppCompatActivity {
     }
 
     private void prepareMenu(ArrayList<NavItem> mNavItems ){
+        System.out.println("ROLEEEEEEEEEEEEEEE" + rolePref);
         mNavItems.add(new NavItem(getString(R.string.home),getString(R.string.all_post),R.drawable.ic_action_home));
-        mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
+        if(!usernamePref.equals("")){
+            if(rolePref.equals("ADMIN") || rolePref.equals("PUBLISHER")){
+                mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
+            }
+
+        }
+
         mNavItems.add(new NavItem(getString(R.string.map),getString(R.string.map_long),R.drawable.ic_map));
-        mNavItems.add(new NavItem(getString(R.string.users),getString(R.string.users_long),R.drawable.ic_list_users));
+        if(rolePref.equals("ADMIN")){
+            mNavItems.add(new NavItem(getString(R.string.users),getString(R.string.users_long),R.drawable.ic_list_users));
+        }
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
-        mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        if(!usernamePref.equals("")){
+            mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_menu_post, menu);
+        if(!usernamePref.equals("")){
+            MenuItem login_item = menu.findItem(R.id.action_login);
+            MenuItem register_tem = menu.findItem(R.id.action_register);
+            login_item.setVisible(false);
+            register_tem.setVisible(false);
+        }
         MenuItem search_item = menu.findItem(R.id.action_search);
         SearchView searchView = (SearchView) search_item.getActionView();
 

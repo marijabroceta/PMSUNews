@@ -88,6 +88,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     private Button location_btn;
     private EditText location_text;
     private FloatingActionButton fab;
+    private TextView viewProfile;
 
     private UserService userService;
     private PostService postService;
@@ -95,8 +96,7 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
 
     private SharedPreferences sharedPreferences;
 
-    private Integer postId;
-    private Post post;
+    private String userNamePref;
     private Bitmap bitmap;
 
     String city;
@@ -135,6 +135,9 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
                 startActivityForResult(Intent.createChooser(intent, "Complete action using"), 1);
             }
         });
+
+        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+        userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
 
         prepareMenu(mNavItems);
 
@@ -182,16 +185,39 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         fab = findViewById(R.id.fab);
 
         TextView textViewUser = findViewById(R.id.user);
-        sharedPreferences = getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
+
         if(sharedPreferences.contains(LoginActivity.Username)){
-            textViewUser.setText(sharedPreferences.getString(LoginActivity.Name,""));
+            textViewUser.setText(userNamePref);
+            viewProfile.setText("View profile");
+            viewProfile.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Call<User> call = userService.getUserByUsername(userNamePref);
+                    call.enqueue(new Callback<User>() {
+                        @Override
+                        public void onResponse(Call<User> call, Response<User> response) {
+                            user = response.body();
+                            Intent intent = new Intent(CreatePostActivity.this,SingleUserActivity.class);
+                            intent.putExtra("userId",user.getId());
+                            startActivity(intent);
+                        }
+
+                        @Override
+                        public void onFailure(Call<User> call, Throwable t) {
+
+                        }
+                    });
+                }
+            });
+        }else{
+            textViewUser.setText("Not logged in");
         }
 
         postService = ServiceUtils.postService;
         userService = ServiceUtils.userService;
         tagService = ServiceUtils.tagService;
 
-        String userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+
         System.out.println(userNamePref);
 
         Call<User> call = userService.getUserByUsername(userNamePref);
@@ -373,7 +399,9 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
         mNavItems.add(new NavItem(getString(R.string.create_post),getString(R.string.create_post_long),R.drawable.ic_action_add));
         mNavItems.add(new NavItem(getString(R.string.map),getString(R.string.map_long),R.drawable.ic_map));
         mNavItems.add(new NavItem(getString(R.string.preferances), getString(R.string.preferance_long), R.drawable.ic_action_settings));
-        mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        if(!userNamePref.equals("")){
+            mNavItems.add(new NavItem(getString(R.string.logout),getString(R.string.logout_long),R.drawable.ic_logout));
+        }
 
     }
 
@@ -381,6 +409,12 @@ public class CreatePostActivity extends AppCompatActivity implements LocationLis
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
         inflater.inflate(R.menu.activity_menu_create_post, menu);
+        if(!userNamePref.equals("")){
+            MenuItem login_item = menu.findItem(R.id.action_login);
+            MenuItem register_tem = menu.findItem(R.id.action_register);
+            login_item.setVisible(false);
+            register_tem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 

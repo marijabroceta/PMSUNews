@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,6 +67,10 @@ public class CommentsFragment extends Fragment {
     private EditText comment_edit;
     private EditText title_comment_edit;
 
+    private CardView cv_edit_comment;
+
+    private String rolePref;
+
     private SharedPreferences sharedPreferences;
 
     private boolean sortCommentsByDate;
@@ -113,6 +118,7 @@ public class CommentsFragment extends Fragment {
         userService = ServiceUtils.userService;
         sharedPreferences = getActivity().getSharedPreferences(LoginActivity.MyPreferances,Context.MODE_PRIVATE);
         String userNamePref = sharedPreferences.getString(LoginActivity.Username,"");
+        rolePref = sharedPreferences.getString(LoginActivity.Role,"");
 
         if(!userNamePref.equals("")){
             Call<User> call_user = userService.getUserByUsername(userNamePref);
@@ -129,6 +135,11 @@ public class CommentsFragment extends Fragment {
                 }
             });
 
+        }
+
+        cv_edit_comment = view.findViewById(R.id.card_view_comment);
+        if(userNamePref.equals("")){
+            cv_edit_comment.setVisibility(View.INVISIBLE);
         }
 
         title_comment_edit = view.findViewById(R.id.title_comment_edit);
